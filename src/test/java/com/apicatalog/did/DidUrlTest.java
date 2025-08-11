@@ -156,6 +156,118 @@ class DidUrlTest {
                         "a",
                         "/",
                         "",
-                        ""));
+                        ""),
+                
+             // Basic valid DID URLs
+                Arguments.of(
+                        "did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH",
+                        "key",
+                        "z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH", 
+                        null, null, null),
+
+                Arguments.of(
+                        "did:key:z6MkhwTbtMsvDSB8z2pF8A4DRNirMRHkRkNvztNFVQVw1W8H",
+                        "key",
+                        "z6MkhwTbtMsvDSB8z2pF8A4DRNirMRHkRkNvztNFVQVw1W8H", 
+                        null, null, null),
+
+                // Valid DID URL with path
+                Arguments.of(
+                        "did:web:example.com/users/alice",
+                        "web",
+                        "example.com",
+                        "/users/alice", null, null),
+
+                // Valid DID URL with path and query
+                Arguments.of(
+                        "did:web:example.com/users/alice?role=admin&active=true",
+                        "web",
+                        "example.com",
+                        "/users/alice", "role=admin&active=true", null),
+
+                // Valid DID URL with fragment
+                Arguments.of(
+                        "did:web:example.com/users/alice#section1",
+                        "web",
+                        "example.com",
+                        "/users/alice", null, "section1"),
+
+                // DID URL with encoded characters in path
+                Arguments.of(
+                        "did:web:example.com/files%2Fmy%2Fdoc%3Fv=1#overview",
+                        "web",
+                        "example.com",
+                        "/files%2Fmy%2Fdoc%3Fv=1", null, "overview"),
+
+                Arguments.of(
+                        "did:web:example.com%3A8443/files%2Fmy%2Fdoc%3Fv=1#overview",
+                        "web",
+                        "example.com%3A8443",
+                        "/files%2Fmy%2Fdoc%3Fv=1", null, "overview"),
+
+                // DID URL with an empty path and query
+                Arguments.of(
+                        "did:web:example.com?#section1",
+                        "web",
+                        "example.com",
+                        "", null, "section1"),
+
+                // DID URL with only query and fragment
+                Arguments.of(
+                        "did:web:example.com?role=admin&active=true#section1",
+                        "web",
+                        "example.com",
+                        null, "role=admin&active=true", "section1"),
+
+                // DID URL with multiple segments and pct-encoded
+                Arguments.of(
+                        "did:web:example.com/path%2Fto%2Ffile%3Fv%3D1#fragment1",
+                        "web",
+                        "example.com",
+                        "/path%2Fto%2Ffile%3Fv%3D1", null, "fragment1"),
+
+                // Valid DID URL with port encoded in the method
+                Arguments.of(
+                        "did:web:example.com%3A8080/path/to/resource",
+                        "web",
+                        "example.com%3A8080",
+                        "/path/to/resource", null, null),
+
+                // Valid DID URL with multiple path segments and query parameters
+                Arguments.of(
+                        "did:example:abc%2Fdef:1234/segment1/segment2?param1=value1&param2=value2#fragment",
+                        "example",
+                        "abc%2Fdef:1234",
+                        "/segment1/segment2", "param1=value1&param2=value2", "fragment"),
+
+                // Valid DID URL with long segments
+                Arguments.of(
+                        "did:web:example.com/path/to/long/segment/with/many/parts/inside",
+                        "web",
+                        "example.com",
+                        "/path/to/long/segment/with/many/parts/inside", null, null),
+
+                // DID URL with query-only (no path)
+                Arguments.of(
+                        "did:web:example.com?query=only#end",
+                        "web",
+                        "example.com",
+                        null, "query=only", "end"),
+
+                Arguments.of(
+                        "did:web:example.com#section#end", 
+                        "web",
+                        "example.com",
+                        null, null, "section#end"),
+
+                // Valid DID URL with a mix of encoded and unencoded parts
+                Arguments.of(
+                        "did:web:example.com/users%2Fjohn%3Fstatus=active#profile",
+                        "web",
+                        "example.com",
+                        "/users%2Fjohn%3Fstatus=active", null, "profile")
+
+
+                );
     }
 }

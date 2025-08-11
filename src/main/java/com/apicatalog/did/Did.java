@@ -189,6 +189,8 @@ public class Did implements Serializable {
         if (parts.length != 2) {
             throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
         }
+        
+        validate(parts[0], parts[1]);
 
         return of(parts[0], parts[1]);
     }
@@ -231,6 +233,9 @@ public class Did implements Serializable {
         if (!Did.SCHEME.equals(parts[0])) {
             throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID; it must start with the 'did:' prefix.");
         }
+        
+        validate(parts[1], parts[2]);
+        
         return of(parts[1], parts[2]);
     }
 
@@ -242,7 +247,6 @@ public class Did implements Serializable {
      *                         use pct-encoding where required); no decoding is
      *                         performed
      * @return a new {@code Did}
-     * @throws IllegalArgumentException if either component is invalid
      * @throws NullPointerException     if {@code methodName} or
      *                                  {@code methodSpecificId} is {@code null}
      */
@@ -251,6 +255,10 @@ public class Did implements Serializable {
         Objects.requireNonNull(methodName);
         Objects.requireNonNull(methodSpecificId);
 
+        return new Did(methodName, methodSpecificId);
+    }
+
+    public static void validate(final String methodName, final String methodSpecificId) {
         // check method name
         if (!isValidMethodName(methodName)) {
             throw new IllegalArgumentException("Not a valid DID: method name [" + methodName + "] is blank or invalid.");
@@ -260,10 +268,77 @@ public class Did implements Serializable {
         if (!isValidMethodSpecificId(methodSpecificId)) {
             throw new IllegalArgumentException("Not a valid DID: method-specific-id [" + methodSpecificId + "] is blank or invalid.");
         }
-
-        return new Did(methodName, methodSpecificId);
     }
 
+    /**
+     * Validates the method name: {@code 1*(%x61-7A / DIGIT)} i.e.
+     * {@code [a-z0-9]+}.
+     *
+     * @param methodName candidate method name
+     * @return {@code true} if valid
+     */
+    public static boolean isValidMethodName(final String methodName) {
+        return (methodName.length() > 0
+                && methodName.codePoints().allMatch(METHOD_CHAR));
+    }
+
+    /**
+     * Validates the method-specific-id using a single-pass scanner that enforces:
+     * <ul>
+     * <li>{@code method-specific-id = *( *idchar ":" ) 1*idchar}</li>
+     * <li>{@code idchar = ALPHA / DIGIT / "." / "-" / "_" / pct-encoded}</li>
+     * <li>{@code pct-encoded = "%" HEXDIG HEXDIG}</li>
+     * </ul>
+     * Empty segments before {@code ':'} are allowed; the final segment must contain
+     * at least one {@code idchar}.
+     *
+     * @param methodSpecificId candidate method-specific-id (raw pct-encoded)
+     * @return {@code true} if valid
+     */
+    public static boolean isValidMethodSpecificId(final String methodSpecificId) {
+        if (methodSpecificId.isEmpty()) {
+            return false;
+        }
+
+        boolean lastSegHasIdChar = false;
+
+        for (int i = 0; i < methodSpecificId.length();) {
+            final char c = methodSpecificId.charAt(i);
+
+            if (c == ':') {
+                // Empty segments are allowed; reset for next segment.
+                lastSegHasIdChar = false;
+                i++;
+                continue;
+            }
+
+            if (c == '%') {
+                // pct-encoded = "%" HEXDIG HEXDIG
+                if ((i + 2 >= methodSpecificId.length())
+                        || !HEXDIG.test(methodSpecificId.charAt(i + 1))
+                        || !HEXDIG.test(methodSpecificId.charAt(i + 2))) {
+                    return false;
+                }
+                i += 3;
+                lastSegHasIdChar = true;
+                continue;
+            }
+
+            final int cp = methodSpecificId.codePointAt(i);
+            if (!ID_CHAR.test(cp)) {
+                return false;
+            }
+
+            i += Character.charCount(cp);
+
+            lastSegHasIdChar = true;
+        }
+
+        // final segment must have at least one idchar
+        return lastSegHasIdChar;
+    }
+
+    
     /**
      * Returns the DID method name (lowercase ASCII).
      *
@@ -369,73 +444,5 @@ public class Did implements Serializable {
      */
     static final boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
-    }
-
-    /**
-     * Validates the method name: {@code 1*(%x61-7A / DIGIT)} i.e.
-     * {@code [a-z0-9]+}.
-     *
-     * @param methodName candidate method name
-     * @return {@code true} if valid
-     */
-    static boolean isValidMethodName(final String methodName) {
-        return (methodName.length() > 0
-                && methodName.codePoints().allMatch(METHOD_CHAR));
-    }
-
-    /**
-     * Validates the method-specific-id using a single-pass scanner that enforces:
-     * <ul>
-     * <li>{@code method-specific-id = *( *idchar ":" ) 1*idchar}</li>
-     * <li>{@code idchar = ALPHA / DIGIT / "." / "-" / "_" / pct-encoded}</li>
-     * <li>{@code pct-encoded = "%" HEXDIG HEXDIG}</li>
-     * </ul>
-     * Empty segments before {@code ':'} are allowed; the final segment must contain
-     * at least one {@code idchar}.
-     *
-     * @param methodSpecificId candidate method-specific-id (raw pct-encoded)
-     * @return {@code true} if valid
-     */
-    static boolean isValidMethodSpecificId(final String methodSpecificId) {
-        if (methodSpecificId.isEmpty()) {
-            return false;
-        }
-
-        boolean lastSegHasIdChar = false;
-
-        for (int i = 0; i < methodSpecificId.length();) {
-            final char c = methodSpecificId.charAt(i);
-
-            if (c == ':') {
-                // Empty segments are allowed; reset for next segment.
-                lastSegHasIdChar = false;
-                i++;
-                continue;
-            }
-
-            if (c == '%') {
-                // pct-encoded = "%" HEXDIG HEXDIG
-                if ((i + 2 >= methodSpecificId.length())
-                        || !HEXDIG.test(methodSpecificId.charAt(i + 1))
-                        || !HEXDIG.test(methodSpecificId.charAt(i + 2))) {
-                    return false;
-                }
-                i += 3;
-                lastSegHasIdChar = true;
-                continue;
-            }
-
-            final int cp = methodSpecificId.codePointAt(i);
-            if (!ID_CHAR.test(cp)) {
-                return false;
-            }
-
-            i += Character.charCount(cp);
-
-            lastSegHasIdChar = true;
-        }
-
-        // final segment must have at least one idchar
-        return lastSegHasIdChar;
-    }
+    }    
 }

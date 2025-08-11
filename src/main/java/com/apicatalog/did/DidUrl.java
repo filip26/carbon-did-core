@@ -1,174 +1,222 @@
 package com.apicatalog.did;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class DidUrl extends Did {
 
     private static final long serialVersionUID = -4371252270461483928L;
-    
-    protected final String path;
-    protected final String query;
-    protected final String fragment;
 
-    protected DidUrl(Did did, String path, String query, String fragment) {
-        super(did.methodName, did.specificId);
+    protected final String path; // raw, may be null; when present, starts with '/'
+    protected final String query; // raw, may be null; without leading '?'
+    protected final String fragment; // raw, may be null; without leading '#'
+
+    protected DidUrl(String methodName, String methodSpecificId, String path, String query, String fragment) {
+        super(methodName, methodSpecificId);
         this.path = path;
         this.query = query;
         this.fragment = fragment;
     }
 
-    /**
-     * @deprecated use {@link DidUrl#of(Did, String, String, String)}
-     * @param did
-     * @param path
-     * @param query
-     * @param fragment
-     * @return
-     */
-    @Deprecated
-    public static DidUrl from(Did did, String path, String query, String fragment) {
-        return of(did, path, query, fragment);
+    /* no validation, just normalization */
+    public static DidUrl of(
+            final String methodName,
+            final String methodSpecificId,
+            final String path,
+            final String query,
+            final String fragment) {
+        return new DidUrl(
+                methodName,
+                methodSpecificId,
+                normalizePath(path),
+                normalizeQuery(query),
+                normalizeFragment(fragment));
     }
 
-    public static DidUrl of(Did did, String path, String query, String fragment) {
-        return new DidUrl(did, path, query, fragment);
-    }
-
-    /**
-     * @deprecated use {@link DidUrl#of(URI)}
-     * @param uri
-     * @return
-     */
-    @Deprecated
-    public static DidUrl from(final URI uri) {
-        return of(uri);
+    public static DidUrl of(final Did did, final String path, final String query, final String fragment) {
+        Objects.requireNonNull(did);
+        return new DidUrl(
+                did.methodName,
+                did.specificId,
+                normalizePath(path),
+                normalizeQuery(query),
+                normalizeFragment(fragment));
     }
 
     public static DidUrl of(final URI uri) {
 
         Objects.requireNonNull(uri);
 
-        if (!Did.SCHEME.equalsIgnoreCase(uri.getScheme())) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID URL, must start with 'did:' prefix.");
+        if (!SCHEME.equalsIgnoreCase(uri.getScheme())) {
+            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; must start with 'did:'.");
         }
 
-        final String[] didParts = uri.getRawSchemeSpecificPart().split(":", 2);
-
-        if (didParts.length != 2) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
+        if (isNotBlank(uri.getAuthority())
+                || isNotBlank(uri.getUserInfo())
+                || isNotBlank(uri.getHost())) {
+            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; authority is not allowed.");
         }
 
-        return of(uri, didParts[0], didParts[1], uri.getFragment());
+        final String ssp = uri.getRawSchemeSpecificPart();
+
+        if (isBlank(ssp)) {
+            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; expected 'did:method:method-specific-id'.");
+        }
+
+        final String[] parts = ssp.split(":", 2);
+
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; expected 'did:method:method-specific-id'.");
+        }
+
+        return of(
+                parts[0],
+                parts[1],
+                uri.getRawFragment() // preserve raw pct-encoding
+        );
     }
 
-    /**
-     * @deprecated use {@link DidUrl#of(String)}
-     * @param uri
-     * @return
-     */
-    @Deprecated
-    public static DidUrl from(final String uri) {
-        return of(uri);
-    }
-
+    /** pct-encoded */
     public static DidUrl of(final String uri) {
 
         Objects.requireNonNull(uri);
 
-        if (uri.length() == 0) {
-            throw new IllegalArgumentException("The DID must not be null or blank string.");
+        if (uri.isEmpty()) {
+            throw new IllegalArgumentException("DID URL string must not be blank.");
         }
 
         final String[] parts = uri.split(":", 3);
 
         if (parts.length != 3) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
+            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL.");
         }
 
-        if (!Did.SCHEME.equalsIgnoreCase(parts[0])) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must start with 'did:' prefix.");
+        if (!Did.SCHEME.equals(parts[0])) {
+            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; it must start with the 'did:' prefix.");
         }
 
-        String rest = parts[2];
+        String ssp = parts[2];
         String fragment = null;
 
-        int fragmentIndex = rest.indexOf('#');
+        int fragmentIndex = parts[2].indexOf('#');
+
         if (fragmentIndex != -1) {
-            fragment = rest.substring(fragmentIndex + 1);
-            rest = rest.substring(0, fragmentIndex);
+            ssp = parts[2].substring(0, fragmentIndex);
+            fragment = parts[2].substring(fragmentIndex + 1);
         }
 
-        return of(uri, parts[1], rest, fragment);
+        return of(parts[1], ssp, fragment);
     }
 
-    protected static DidUrl of(Object uri, final String method, final String rest, final String fragment) {
-        String specificId = rest;
+    protected static DidUrl of(final String methodName,
+            final String ssp,
+            final String fragment) {
 
+        // Determine end of method-specific-id (stop before first '/' or '?' or end)
+        int msiEndIndex = methodSpecificIdEndIndex(ssp);
+
+        if (msiEndIndex == 0) {
+            throw new IllegalArgumentException("The URI is not a valid DID URL; method-specific-id is empty.");
+        }
+
+        final String methodSpecificId = ssp.substring(0, msiEndIndex);
+
+        validate(methodName, methodSpecificId);
+
+        final String rest = ssp.substring(msiEndIndex); // starts with '/' or '?' or is empty
+
+        // Extract path and query from tail (both raw, without leading markers)
         String path = null;
         String query = null;
 
-        int urlPartIndex = specificId.indexOf('?');
-        if (urlPartIndex != -1) {
-            query = specificId.substring(urlPartIndex + 1);
-            specificId = specificId.substring(0, urlPartIndex);
+        if (!rest.isEmpty()) {
+            if (rest.charAt(0) == '/') {
+                // path-abempty: consume path, maybe followed by ?query
+                final int queryIndex = rest.indexOf('?');
+                if (queryIndex == -1) {
+                    path = rest; // includes leading '/'
+                } else {
+                    path = rest.substring(0, queryIndex); // includes leading '/'
+                    query = rest.substring(queryIndex + 1); // without '?'
+                }
+            } else if (rest.charAt(0) == '?') {
+                query = rest.substring(1); // empty query allowed
+            } else {
+                // Should not happen (we only cut at '/' or '?')
+                throw new IllegalArgumentException("The URI is not a valid DID URL; malformed path/query [" + rest + "].");
+            }
         }
 
-        urlPartIndex = specificId.indexOf('/');
-        if (urlPartIndex != -1) {
-            path = specificId.substring(urlPartIndex);
-            specificId = specificId.substring(0, urlPartIndex);
-        }
+        return new DidUrl(
+                methodName,
+                methodSpecificId,
+                path,
+                query,
+                fragment);
+    }
 
-        Did did = of(method, specificId);
+    /** @deprecated use {@link DidUrl#of(String)} */
+    @Deprecated
+    public static DidUrl from(final String uri) {
+        return of(uri);
+    }
 
-        return new DidUrl(did, path, query, fragment);
+    /** @deprecated use {@link DidUrl#of(Did, String, String, String)} */
+    @Deprecated
+    public static DidUrl from(Did did, String path, String query, String fragment) {
+        return of(did, path, query, fragment);
+    }
+
+    /** @deprecated use {@link DidUrl#of(URI)} */
+    @Deprecated
+    public static DidUrl from(final URI uri) {
+        return of(uri);
     }
 
     public static boolean isDidUrl(final URI uri) {
-        if (!Did.SCHEME.equalsIgnoreCase(uri.getScheme())
-                || isBlank(uri.getSchemeSpecificPart())
+        if (uri == null
+                || !SCHEME.equals(uri.getScheme())
+                || isBlank(uri.getRawSchemeSpecificPart())
                 || isNotBlank(uri.getAuthority())
                 || isNotBlank(uri.getUserInfo())
                 || isNotBlank(uri.getHost())) {
             return false;
         }
 
-        final String[] parts = uri.getSchemeSpecificPart().split(":", 2);
+        final String[] parts = uri.getRawSchemeSpecificPart().split(":", 2);
 
-        return parts.length == 2
-                && parts[0].length() > 0
-                && parts[1].length() > 0
-                && parts[0].codePoints().allMatch(METHOD_CHAR);
-    }
-
-    public static boolean isDidUrl(final String uri) {
-        if (uri == null) {
+        if (parts.length != 2) {
             return false;
         }
 
-        final String[] parts = uri.split(":", 3);
+        if (!isValidMethodName(parts[0])) {
+            return false;
+        }
 
-        return parts.length == 3
-                && Did.SCHEME.equalsIgnoreCase(parts[0])
-                && parts[1].length() > 0
-                && parts[2].length() > 0
-                && parts[1].codePoints().allMatch(METHOD_CHAR);
+        int msiEndIndex = methodSpecificIdEndIndex(parts[1]);
+
+        if (msiEndIndex == 0) {
+            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; method-specific-id is empty.");
+        }
+
+        return isValidMethodSpecificId(parts[1].substring(0, msiEndIndex));
+    }
+
+    public static boolean isDidUrl(final String uri) {
+        if (uri == null || uri.isEmpty()) {
+            return false;
+        }
+        try {
+            return isDidUrl(URI.create(uri));
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     @Override
     public URI toUri() {
-        try {
-            return new URI(SCHEME,
-                    appendPathQuery(new StringBuilder()
-                            .append(methodName)
-                            .append(':')
-                            .append(specificId)).toString(),
-                    fragment);
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException(e);
-        }
+        // Preserve exact raw form produced by toString()
+        return URI.create(toString());
     }
 
     @Override
@@ -183,15 +231,16 @@ public class DidUrl extends Did {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder(super.toString());
+        final StringBuilder builder = new StringBuilder()
+                .append(SCHEME).append(':')
+                .append(methodName).append(':')
+                .append(specificId);
 
         appendPathQuery(builder);
 
         if (fragment != null) {
-            if (fragment.length() == 0 || fragment.charAt(0) != '#') {
-                builder.append('#');
-            }
-            if (fragment.length() > 0) {
+            builder.append('#');
+            if (!fragment.isEmpty()) {
                 builder.append(fragment);
             }
         }
@@ -201,19 +250,16 @@ public class DidUrl extends Did {
 
     protected StringBuilder appendPathQuery(final StringBuilder builder) {
         if (path != null) {
-            if (path.length() == 0 || path.charAt(0) != '/') {
+            if (path.isEmpty() || path.charAt(0) != '/') {
                 builder.append('/');
-            }
-            if (path.length() > 0) {
+            } else if (!path.isEmpty()) {
                 builder.append(path);
             }
         }
 
         if (query != null) {
-            if (query.length() == 0 || query.charAt(0) != '?') {
-                builder.append('?');
-            }
-            if (query.length() > 0) {
+            builder.append('?');
+            if (!query.isEmpty()) {
                 builder.append(query);
             }
         }
@@ -254,5 +300,44 @@ public class DidUrl extends Did {
 
     public String getQuery() {
         return query;
+    }
+
+    static final String normalizePath(final String p) {
+        if (p == null) {
+            return null;
+        }
+        if (p.isEmpty()) {
+            return ""; // will render as "/"
+        }
+        return p.charAt(0) == '/' ? p : "/" + p;
+    }
+
+    static final String normalizeQuery(final String q) {
+        if (q == null) {
+            return null;
+        }
+        return (q.startsWith("?")) ? q.substring(1) : q;
+    }
+
+    static final String normalizeFragment(final String f) {
+        if (f == null) {
+            return null;
+        }
+        return (f.startsWith("#")) ? f.substring(1) : f;
+    }
+
+    static final int methodSpecificIdEndIndex(String ssp) {
+        int msiEndIndex = ssp.length();
+        final int slashIndex = ssp.indexOf('/');
+        final int qmarkIndex = ssp.indexOf('?');
+
+        if (slashIndex != -1 && slashIndex < msiEndIndex) {
+            msiEndIndex = slashIndex;
+        }
+        if (qmarkIndex != -1 && qmarkIndex < msiEndIndex) {
+            msiEndIndex = qmarkIndex;
+        }
+
+        return msiEndIndex;
     }
 }
