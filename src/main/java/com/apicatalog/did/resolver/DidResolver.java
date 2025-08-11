@@ -1,23 +1,29 @@
 package com.apicatalog.did.resolver;
 
-import com.apicatalog.controller.ControllerDocument;
 import com.apicatalog.did.Did;
 import com.apicatalog.did.document.DidDocument;
 
 /**
- * Performs {@link Did} resolution by expanding {@link Did} into {@link ControllerDocument}.
+ * Performs {@link Did} resolution by expanding {@link Did} into
+ * {@link DidDocument}.
  *
- * @see <a href="https://www.w3.org/TR/did-core/#dfn-did-resolvers">DID resolvers</a>
+ * @see <a href="https://www.w3.org/TR/did-core/#dfn-did-resolvers">DID
+ *      resolvers</a>
  */
 public interface DidResolver {
 
+    interface DocumentOptions {
+
+    }
+    
     /**
-     * Resolves the given {@link Did} into {@link ControllerDocument}
+     * Resolves the given {@link Did} into {@link DidDocument}
      *
-     * @param did To resolve
+     * @param did     To resolve
+     * @param options
      * @return a new {@link DidDocument} instance
      * 
      * @throws IllegalArgumentException if the given DID cannot be resolved
      */
-    DidDocument resolve(Did did);
+    ResolvedDocument resolve(Did did, DocumentOptions options);
 }

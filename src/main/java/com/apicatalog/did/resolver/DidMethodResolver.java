@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.apicatalog.did.Did;
-import com.apicatalog.did.document.DidDocument;
 
 public class DidMethodResolver implements DidResolver {
 
@@ -21,14 +20,14 @@ public class DidMethodResolver implements DidResolver {
     }
 
     @Override
-    public DidDocument resolve(Did did) {
+    public ResolvedDocument resolve(Did did, DocumentOptions options) {
 
         Objects.requireNonNull(did);
 
         final DidResolver resolver = resolvers.get(did.getMethod());
 
         if (resolver != null) {
-            return resolver.resolve(did);
+            return resolver.resolve(did, options);
         }
 
         throw new IllegalArgumentException("The " + did.toString() + " method cannot be resolved.");
