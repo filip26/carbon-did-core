@@ -58,7 +58,7 @@
 
 		<jakarta.json.version>2.0.1</jakarta.json.version>
 
-		<copper.multibase.version>1.1.0</copper.multibase.version>
+		<copper.multibase.version>4.0.0</copper.multibase.version>
 
 		<!-- test resources -->
 		<junit.version>5.13.4</junit.version>
