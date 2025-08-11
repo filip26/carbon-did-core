@@ -6,8 +6,8 @@ import java.util.Objects;
 
 public class DidUrl extends Did {
 
-    private static final long serialVersionUID = 5752880077497569763L;
-
+    private static final long serialVersionUID = -4371252270461483928L;
+    
     protected final String path;
     protected final String query;
     protected final String fragment;
@@ -54,7 +54,7 @@ public class DidUrl extends Did {
             throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID URL, must start with 'did:' prefix.");
         }
 
-        final String[] didParts = uri.getSchemeSpecificPart().split(":", 2);
+        final String[] didParts = uri.getRawSchemeSpecificPart().split(":", 2);
 
         if (didParts.length != 2) {
             throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
