@@ -7,7 +7,9 @@ import java.util.function.IntPredicate;
 
 public class Did implements Serializable {
 
-    private static final long serialVersionUID = 8800667526627004412L;
+    private static final long serialVersionUID = -2933853082203788425L;
+
+    public static final String SCHEME = "did";
 
     /*
      * method-char = %x61-7A / DIGIT
@@ -18,13 +20,19 @@ public class Did implements Serializable {
     /*
      * idchar = ALPHA / DIGIT / "." / "-" / "_" / pct-encoded
      */
-    static final IntPredicate ID_CHAR = ch -> Character.isLetter(ch)
-            || Character.isDigit(ch)
+    static final IntPredicate ID_CHAR = ch -> ch >= 'a' && ch <= 'z'
+            || 'A' <= ch && ch <= 'Z'
+            || '0' <= ch && ch <= '9'
             || ch == '.'
             || ch == '-'
             || ch == '_';
 
-    public static final String SCHEME = "did";
+    /*
+     * HEXDIG = 0-9 / A-F / a-f
+     */
+    static final IntPredicate HEXDIG = ch -> ('0' <= ch && ch <= '9') ||
+            ('A' <= ch && ch <= 'F') ||
+            ('a' <= ch && ch <= 'f');
 
     protected final String methodName;
     protected final String specificId;
@@ -52,12 +60,8 @@ public class Did implements Serializable {
         final String[] parts = uri.getRawSchemeSpecificPart().split(":", 2);
 
         return parts.length == 2
-                && parts[0].length() > 0
-                && parts[1].length() > 0
-                && parts[0].codePoints().allMatch(METHOD_CHAR)
-                // FIXME does not validate pct-encoded correctly
-                && parts[1].codePoints().allMatch(ID_CHAR.or(ch -> ch == ':' || ch == '%'));
-
+                && isValidMethodName(parts[0])
+                && isValidMethodSpecificId(parts[1]);
     }
 
     public static boolean isDid(final String uri) {
@@ -69,11 +73,8 @@ public class Did implements Serializable {
 
         return parts.length == 3
                 && Did.SCHEME.equalsIgnoreCase(parts[0])
-                && parts[1].length() > 0
-                && parts[2].length() > 0
-                && parts[1].codePoints().allMatch(METHOD_CHAR)
-                // FIXME does not validate pct-encoded correctly
-                && parts[2].codePoints().allMatch(ID_CHAR.or(ch -> ch == ':' || ch == '%'));
+                && isValidMethodName(parts[1])
+                && isValidMethodSpecificId(parts[2]);
     }
 
     /**
@@ -121,7 +122,7 @@ public class Did implements Serializable {
             throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
         }
 
-        return of(uri, parts[0], parts[1]);
+        return of(parts[0], parts[1]);
     }
 
     /**
@@ -159,25 +160,27 @@ public class Did implements Serializable {
         if (!Did.SCHEME.equalsIgnoreCase(parts[0])) {
             throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must start with 'did:' prefix.");
         }
-
-        return of(uri, parts[1], parts[2]);
+        return of(parts[1], parts[2]);
     }
 
-    protected static Did of(final Object uri, final String methodName, final String methodSpecificId) {
+    /**
+     * 
+     * @param methodName
+     * @param methodSpecificId must be pct-encoded
+     * @return
+     */
+    public static Did of(final String methodName, final String methodSpecificId) {
 
         // check method name
         if (methodName == null
-                || methodName.length() == 0
-                || !methodName.codePoints().allMatch(METHOD_CHAR)) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, method [" + methodName + "] syntax is blank or invalid.");
+                || !isValidMethodName(methodName)) {
+            throw new IllegalArgumentException("The URI is not valid DID, method [" + methodName + "] syntax is blank or invalid.");
         }
 
         // check method specific id
         if (methodSpecificId == null
-                || methodSpecificId.length() == 0
-                // FIXME does not validate pct-encoded correctly
-                || !methodSpecificId.codePoints().allMatch(ID_CHAR.or(ch -> ch == ':' || ch == '%'))) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, method specific id [" + methodSpecificId + "] is blank.");
+                || !isValidMethodSpecificId(methodSpecificId)) {
+            throw new IllegalArgumentException("The URI is not valid DID, method specific id [" + methodSpecificId + "] is blank.");
         }
 
         return new Did(methodName, methodSpecificId);
@@ -246,5 +249,59 @@ public class Did implements Serializable {
 
     static final boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
+    }
+
+    static boolean isValidMethodName(final String methodName) {
+        return (methodName.length() > 0
+                && methodName.codePoints().allMatch(METHOD_CHAR));
+    }
+
+    /*
+     * method-specific-id = *( *idchar ":" ) 1*idchar - zero or more segments that
+     * may be empty before ":" (i.e., "::" allowed) - final segment must contain at
+     * least one idchar - idchar may be ALPHA / DIGIT / "." / "-" / "_" or
+     * pct-encoded = "%" HEXDIG HEXDIG
+     */
+    static boolean isValidMethodSpecificId(final String methodSpecificId) {
+        if (methodSpecificId.isEmpty()) {
+            return false;
+        }
+
+        boolean lastSegHasIdChar = false;
+
+        for (int i = 0; i < methodSpecificId.length();) {
+            final char c = methodSpecificId.charAt(i);
+
+            if (c == ':') {
+                // Empty segments are allowed; reset for next segment.
+                lastSegHasIdChar = false;
+                i++;
+                continue;
+            }
+
+            if (c == '%') {
+                // pct-encoded = "%" HEXDIG HEXDIG
+                if ((i + 2 >= methodSpecificId.length())
+                        || !HEXDIG.test(methodSpecificId.charAt(i + 1))
+                        || !HEXDIG.test(methodSpecificId.charAt(i + 2))) {
+                    return false;
+                }
+                i += 3;
+                lastSegHasIdChar = true;
+                continue;
+            }
+
+            final int cp = methodSpecificId.codePointAt(i);
+            if (!ID_CHAR.test(cp)) {
+                return false;
+            }
+
+            i += Character.charCount(cp);
+
+            lastSegHasIdChar = true;
+        }
+
+        // final segment must have at least one idchar
+        return lastSegHasIdChar;
     }
 }
