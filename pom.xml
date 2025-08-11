@@ -7,20 +7,20 @@
     <groupId>com.apicatalog</groupId>
     <artifactId>carbon-did</artifactId>
 
-	<version>1.0.0</version>
+	<version>0.9.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<url>https://github.com/filip26/carbon-did</url>
+	<url>https://github.com/filip26/carbon-did-core</url>
 	<scm>
-		<connection>scm:git:git://github.com/filip26/carbon-did.git</connection>
-		<developerConnection>scm:git:git://github.com/filip26/carbon-did.git</developerConnection>
-		<url>https://github.com/filip26/carbon-did/tree/main</url>
+		<connection>scm:git:git://github.com/filip26/carbon-did-core.git</connection>
+		<developerConnection>scm:git:git://github.com/filip26/carbon-did-core.git</developerConnection>
+		<url>https://github.com/filip26/carbon-did-core/tree/main</url>
 	</scm>
 
     <name>Carbon DIDs</name>
 
     <description>
-        Decentralized Identifiers (DIDs) API, did:key, Multikey
+        Decentralized Identifiers (DIDs) Primitives &amp; API
     </description>
 
     <licenses>
@@ -33,7 +33,7 @@
 
 	<issueManagement>
 		<system>github</system>
-		<url>https://github.com/filip26/carbon-did/issues</url>
+		<url>https://github.com/filip26/carbon-did-core/issues</url>
 	</issueManagement>
 
     <developers>
@@ -61,8 +61,8 @@
         <jakarta.json.version>2.0.1</jakarta.json.version>
 
         <linked-tree.version>0.0.68-SNAPSHOT</linked-tree.version>
-        <copper.multicodec.version>1.1.0</copper.multicodec.version>
-        <copper.multibase.version>1.0.0</copper.multibase.version>
+        <copper.multicodec.version>2.1.0</copper.multicodec.version>
+        <copper.multibase.version>4.0.0</copper.multibase.version>
 
         <!-- test resources -->
         <junit.version>5.11.3</junit.version>
@@ -215,12 +215,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-            </distributionManagement>
         </profile>
     </profiles>
 </project>

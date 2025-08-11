@@ -13,7 +13,7 @@ public class DidUrl extends Did {
     protected final String fragment;
 
     protected DidUrl(Did did, String path, String query, String fragment) {
-        super(did.method, did.specificId);
+        super(did.methodName, did.specificId);
         this.path = path;
         this.query = query;
         this.fragment = fragment;
@@ -162,7 +162,7 @@ public class DidUrl extends Did {
         try {
             return new URI(SCHEME,
                     appendPathQuery(new StringBuilder()
-                            .append(method)
+                            .append(methodName)
                             .append(':')
                             .append(specificId)).toString(),
                     fragment);

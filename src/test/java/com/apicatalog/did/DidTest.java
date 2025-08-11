@@ -130,7 +130,11 @@ class DidTest {
                         "12345.example.com"),
                 Arguments.of("did:tdw:example.com_12345",
                         "tdw",
-                        "example.com_12345"));
+                        "example.com_12345"),
+                Arguments.of("did:0:%E2%9C%93",
+                        "0",
+                        "%E2%9C%93"
+                        ));
     }
 
     static Stream<Arguments> negativeVectors() {
@@ -143,7 +147,6 @@ class DidTest {
                 Arguments.of("did:example:123#"),
                 Arguments.of("did:example:123?"),
                 Arguments.of("did:example:123/"),
-                null,
                 Arguments.of(""),
                 Arguments.of("https://example.com"),
                 Arguments.of("irc:example:channel"),
@@ -158,7 +161,8 @@ class DidTest {
                 Arguments.of("did::channel"),
                 Arguments.of("did: :channel"),
                 Arguments.of(" did:method:id"),
-                Arguments.of("did:method:id "));
+                Arguments.of("did:method:id ")
+                );
     }
 
 }
