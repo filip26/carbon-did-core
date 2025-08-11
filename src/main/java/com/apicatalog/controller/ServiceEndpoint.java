@@ -2,16 +2,12 @@ package com.apicatalog.controller;
 
 import java.net.URI;
 
-import com.apicatalog.linkedtree.orm.Fragment;
-import com.apicatalog.linkedtree.orm.Id;
-import com.apicatalog.linkedtree.type.FragmentType;
-
-@Fragment(generic = true)
+//@Fragment(generic = true)
 public interface ServiceEndpoint {
 
-    @Id
+//    @Id
     URI id();
 
-    FragmentType type();
+//    FragmentType type();
 
 }

@@ -13,10 +13,9 @@ import java.util.stream.Stream;
 
 import com.apicatalog.jsonld.document.JsonDocument;
 import com.apicatalog.jsonld.json.JsonLdComparison;
-import com.apicatalog.linkedtree.LinkedNode;
-import com.apicatalog.linkedtree.writer.DictionaryWriter;
 
 import jakarta.json.Json;
+import jakarta.json.JsonReader;
 import jakarta.json.JsonStructure;
 import jakarta.json.JsonValue;
 import jakarta.json.JsonWriter;
@@ -26,7 +25,7 @@ import jakarta.json.stream.JsonGenerator;
 public class TestCase {
 
     public static final JsonDocument resource(String name) throws IOException, URISyntaxException {
-        try (var reader = Json.createReader(TestCase.class.getResourceAsStream(name))) {
+        try (JsonReader reader = Json.createReader(TestCase.class.getResourceAsStream(name))) {
             return JsonDocument.of(reader.readObject());
         }
     }
@@ -36,23 +35,23 @@ public class TestCase {
                 .filter(name -> name.toString().endsWith(suffix))
                 .sorted()
                 .map(path -> {
-                    try (var reader = Json.createReader(TestCase.class.getResourceAsStream(folder + "/" + path.getFileName().toString()))) {
+                    try (JsonReader reader = Json.createReader(TestCase.class.getResourceAsStream(folder + "/" + path.getFileName().toString()))) {
                         return new Object[] { path.getFileName().toString(), reader.read() };
                     }
                 });
     }
 
-    public static final boolean compareJson(final String testCase, final LinkedNode data, final JsonStructure result, final JsonStructure expected) {
+    public static final boolean compareJson(final String testCase, final JsonValue data, final JsonStructure result, final JsonStructure expected) {
 
         if (JsonLdComparison.equals(expected, result)) {
             return true;
         }
 
         write(testCase, result, expected, null);
-
+//FIXME
         if (data != null) {
             final StringWriter stringWriter = new StringWriter();
-            (new DictionaryWriter(new PrintWriter(stringWriter))).print(data);
+//            (new DictionaryWriter(new PrintWriter(stringWriter))).print(data);
             System.out.print(stringWriter.toString());
         }
         fail("Expected " + expected + ", but was" + result);

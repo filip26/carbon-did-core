@@ -47,20 +47,18 @@
         </developer>
     </developers>
 
-    <inceptionYear>
-        2022</inceptionYear>
+    <inceptionYear>2022</inceptionYear>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <argLine>-Dfile.encoding=UTF-8</argLine>
 
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
 
         <jakarta.json.version>2.0.1</jakarta.json.version>
 
-        <linked-tree.version>0.0.68-SNAPSHOT</linked-tree.version>
         <copper.multicodec.version>2.1.0</copper.multicodec.version>
         <copper.multibase.version>4.0.0</copper.multibase.version>
 
@@ -75,11 +73,6 @@
             <artifactId>jakarta.json-api</artifactId>
             <version>${jakarta.json.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.apicatalog</groupId>
-            <artifactId>linked-tree</artifactId>
-            <version>${linked-tree.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apicatalog</groupId>
@@ -105,7 +98,7 @@
             <version>${jakarta.json.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- REMOVE-->
                 <dependency>
             <groupId>com.apicatalog</groupId>

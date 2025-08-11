@@ -4,42 +4,21 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.apicatalog.linkedtree.orm.Adapter;
-import com.apicatalog.linkedtree.orm.Compaction;
-import com.apicatalog.linkedtree.orm.Context;
-import com.apicatalog.linkedtree.orm.Fragment;
-import com.apicatalog.linkedtree.orm.Id;
-import com.apicatalog.linkedtree.orm.Term;
-import com.apicatalog.linkedtree.orm.Type;
-import com.apicatalog.linkedtree.orm.Vocab;
-import com.apicatalog.linkedtree.xsd.XsdDateTimeAdapter;
-
 /**
  * Represents a verification method declaration.
  * 
  * https://www.w3.org/TR/controller-document/#verification-methods
  */
-@Fragment(generic = true)
-@Vocab("https://w3id.org/security#")
-@Context("https://www.w3.org/ns/controller/v1")
 public interface VerificationMethod {
 
-    @Id
     URI id();
 
-    @Type
     String type();
 
-    @Compaction(order = 10)
     URI controller();
 
-    @Adapter(XsdDateTimeAdapter.class)
-    @Compaction(order = 20)
     Instant revoked();
 
-    @Adapter(XsdDateTimeAdapter.class)
-    @Term(value = "expiration", compact = false)
-    @Compaction(order = 30)
     Instant expires();
 
     static boolean equals(VerificationMethod method1, VerificationMethod method2) {
