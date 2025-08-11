@@ -10,4 +10,8 @@ public interface Service {
     Collection<String> type();
 
     Collection<ServiceEndpoint> endpoint();
+    
+    default boolean hasRequiredProperties() {
+        return id() != null && type() != null && endpoint() != null && !endpoint().isEmpty();
+    }
 }

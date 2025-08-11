@@ -5,6 +5,7 @@ import java.io.InputStream;
 public interface ResolvedPresentation {
 
     String contentType();
+    
     InputStream stream();
 
 }

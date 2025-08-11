@@ -32,4 +32,9 @@ public interface DidDocument {
     Set<VerificationMethod> capabilityDelegation();
 
     Set<Service> service();
+    
+    default boolean hasRequiredProperties() {
+        return id() != null;
+    }
+
 }

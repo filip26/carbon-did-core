@@ -10,12 +10,17 @@ import com.apicatalog.did.document.DidDocument;
  * @see <a href="https://www.w3.org/TR/did-core/#dfn-did-resolvers">DID
  *      resolvers</a>
  */
-public interface DidResolver {
+public interface DocumentResolver {
 
-    interface DocumentOptions {
-
+    interface Options {
+        static final Options EMPTY = new Options() {
+        };
     }
-    
+
+    default ResolvedDocument resolve(Did did) throws DidResolutionException {
+        return resolve(did, Options.EMPTY);
+    }
+
     /**
      * Resolves the given {@link Did} into {@link DidDocument}
      *
@@ -24,6 +29,7 @@ public interface DidResolver {
      * @return a new {@link DidDocument} instance
      * 
      * @throws IllegalArgumentException if the given DID cannot be resolved
+     * @throws DidResolutionException 
      */
-    ResolvedDocument resolve(Did did, DocumentOptions options);
+    ResolvedDocument resolve(Did did, Options options) throws DidResolutionException;
 }

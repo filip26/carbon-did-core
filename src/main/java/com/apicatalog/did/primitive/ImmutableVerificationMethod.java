@@ -1,4 +1,4 @@
-package com.apicatalog.did.generics;
+package com.apicatalog.did.primitive;
 
 import java.util.Map;
 import java.util.Objects;
@@ -7,7 +7,7 @@ import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
 import com.apicatalog.did.document.VerificationMethod;
 
-public class GenericVerificationMethod implements VerificationMethod {
+public class ImmutableVerificationMethod implements VerificationMethod {
 
     protected final DidUrl id;
     protected final String type;
@@ -15,7 +15,7 @@ public class GenericVerificationMethod implements VerificationMethod {
     protected final String publicKeyMultibase;
     protected final Map<String, Object> publicKeyJwk;
 
-    protected GenericVerificationMethod(
+    protected ImmutableVerificationMethod(
             final DidUrl id,
             final String type,
             final Did controller,
@@ -28,33 +28,33 @@ public class GenericVerificationMethod implements VerificationMethod {
         this.publicKeyJwk = publicKeyJwk;
     }
 
-    public static final GenericVerificationMethod of(final DidUrl id,
+    public static final ImmutableVerificationMethod of(final DidUrl id,
             final String type,
             final Did controller) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(type);
         Objects.requireNonNull(controller);
-        return new GenericVerificationMethod(id, type, controller, null, null);
+        return new ImmutableVerificationMethod(id, type, controller, null, null);
     }
 
-    public static final GenericVerificationMethod of(final DidUrl id,
+    public static final ImmutableVerificationMethod of(final DidUrl id,
             final String type,
             final Did controller,
             final String publicKeyMultibase) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(type);
         Objects.requireNonNull(controller);
-        return new GenericVerificationMethod(id, type, controller, publicKeyMultibase, null);
+        return new ImmutableVerificationMethod(id, type, controller, publicKeyMultibase, null);
     }
 
-    public static final GenericVerificationMethod of(final DidUrl id,
+    public static final ImmutableVerificationMethod of(final DidUrl id,
             final String type,
             final Did controller,
             final Map<String, Object> publicKeyJwk) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(type);
         Objects.requireNonNull(controller);
-        return new GenericVerificationMethod(id, type, controller, null, publicKeyJwk);
+        return new ImmutableVerificationMethod(id, type, controller, null, publicKeyJwk);
     }
 
     @Override

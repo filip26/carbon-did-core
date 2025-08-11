@@ -18,6 +18,10 @@ public interface VerificationMethod {
 
     Map<String, Object> publicKeyJwk();
 
+    default boolean hasRequiredProperties() {
+        return id() != null && type() != null && controller() != null;
+    }
+
     static boolean equals(VerificationMethod method1, VerificationMethod method2) {
         if (method1 == null || method2 == null) {
             return method1 == method2;

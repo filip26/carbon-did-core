@@ -6,4 +6,7 @@ public interface ServiceEndpoint {
 
     URI id();
 
+    default boolean hasRequiredProperties() {
+        return id() != null;
+    }
 }

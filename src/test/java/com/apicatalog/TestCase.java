@@ -1,7 +1,5 @@
 package com.apicatalog;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -10,9 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.stream.Stream;
-
-import com.apicatalog.jsonld.document.JsonDocument;
-import com.apicatalog.jsonld.json.JsonLdComparison;
 
 import jakarta.json.Json;
 import jakarta.json.JsonReader;
@@ -24,11 +19,11 @@ import jakarta.json.stream.JsonGenerator;
 
 public class TestCase {
 
-    public static final JsonDocument resource(String name) throws IOException, URISyntaxException {
-        try (JsonReader reader = Json.createReader(TestCase.class.getResourceAsStream(name))) {
-            return JsonDocument.of(reader.readObject());
-        }
-    }
+//    public static final JsonDocument resource(String name) throws IOException, URISyntaxException {
+//        try (JsonReader reader = Json.createReader(TestCase.class.getResourceAsStream(name))) {
+//            return JsonDocument.of(reader.readObject());
+//        }
+//    }
 
     public static final Stream<Object[]> resources(String folder, String suffix) throws IOException, URISyntaxException {
         return Files.walk(Paths.get(TestCase.class.getResource(folder).toURI()), 1)
@@ -41,22 +36,22 @@ public class TestCase {
                 });
     }
 
-    public static final boolean compareJson(final String testCase, final JsonValue data, final JsonStructure result, final JsonStructure expected) {
-
-        if (JsonLdComparison.equals(expected, result)) {
-            return true;
-        }
-
-        write(testCase, result, expected, null);
-//FIXME
-        if (data != null) {
-            final StringWriter stringWriter = new StringWriter();
-//            (new DictionaryWriter(new PrintWriter(stringWriter))).print(data);
-            System.out.print(stringWriter.toString());
-        }
-        fail("Expected " + expected + ", but was" + result);
-        return false;
-    }
+//    public static final boolean compareJson(final String testCase, final JsonValue data, final JsonStructure result, final JsonStructure expected) {
+//
+//        if (JsonLdComparison.equals(expected, result)) {
+//            return true;
+//        }
+//
+//        write(testCase, result, expected, null);
+////FIXME
+//        if (data != null) {
+//            final StringWriter stringWriter = new StringWriter();
+////            (new DictionaryWriter(new PrintWriter(stringWriter))).print(data);
+//            System.out.print(stringWriter.toString());
+//        }
+//        fail("Expected " + expected + ", but was" + result);
+//        return false;
+//    }
 
     static void write(final String testCase, final JsonStructure result, final JsonStructure expected, Exception error) {
         final StringWriter stringWriter = new StringWriter();
