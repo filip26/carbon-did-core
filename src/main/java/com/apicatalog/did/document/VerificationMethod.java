@@ -14,7 +14,7 @@ public interface VerificationMethod {
 
     Did controller();
 
-    String publicKeyMultibase();
+    MultibaseEncoded publicKeyMultibase();
 
     Map<String, Object> publicKeyJwk();
 

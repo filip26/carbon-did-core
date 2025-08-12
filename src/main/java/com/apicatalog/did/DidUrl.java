@@ -43,6 +43,11 @@ public class DidUrl extends Did {
                 normalizeFragment(fragment));
     }
 
+    public static DidUrl fragment(final Did did, final String fragment) {
+        Objects.requireNonNull(fragment);
+        return of(did, null, null, fragment);
+    }
+
     public static DidUrl of(final URI uri) {
 
         Objects.requireNonNull(uri);
@@ -227,6 +232,10 @@ public class DidUrl extends Did {
     @Override
     public DidUrl asDidUrl() {
         return this;
+    }
+
+    public Did toDid() {
+        return new Did(super.methodName, super.specificId);
     }
 
     @Override
