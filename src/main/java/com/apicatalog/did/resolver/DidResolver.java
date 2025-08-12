@@ -10,7 +10,7 @@ import com.apicatalog.did.document.DidDocument;
  * @see <a href="https://www.w3.org/TR/did-core/#dfn-did-resolvers">DID
  *      resolvers</a>
  */
-public interface DocumentResolver {
+public interface DidResolver {
 
     interface Options {
         static final Options EMPTY = new Options() {

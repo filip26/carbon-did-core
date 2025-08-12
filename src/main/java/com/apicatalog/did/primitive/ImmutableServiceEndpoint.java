@@ -13,7 +13,7 @@ public class ImmutableServiceEndpoint implements ServiceEndpoint {
         this.id = id;
     }
 
-    public static final ImmutableServiceEndpoint of(URI id) {
+    public static final ServiceEndpoint of(URI id) {
         Objects.requireNonNull(id);
         return new ImmutableServiceEndpoint(id);
     }

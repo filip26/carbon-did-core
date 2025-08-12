@@ -2,9 +2,9 @@ package com.apicatalog.did.primitive;
 
 import java.util.Objects;
 
-import com.apicatalog.did.resolver.PresentationResolver;
+import com.apicatalog.did.resolver.DidPresenter;
 
-public class ImmutablePresentationOptions implements PresentationResolver.Options {
+public class ImmutablePresentationOptions implements DidPresenter.Options {
 
     protected final String accept;
 
@@ -12,7 +12,7 @@ public class ImmutablePresentationOptions implements PresentationResolver.Option
         this.accept = accept;
     }
 
-    public static final PresentationResolver.Options of(String accept) {
+    public static final DidPresenter.Options of(String accept) {
         Objects.requireNonNull(accept);
         return new ImmutablePresentationOptions(accept);
     }

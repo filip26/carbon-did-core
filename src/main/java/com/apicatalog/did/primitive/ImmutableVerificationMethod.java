@@ -28,7 +28,7 @@ public class ImmutableVerificationMethod implements VerificationMethod {
         this.publicKeyJwk = publicKeyJwk;
     }
 
-    public static final ImmutableVerificationMethod of(final DidUrl id,
+    public static final VerificationMethod of(final DidUrl id,
             final String type,
             final Did controller) {
         Objects.requireNonNull(id);
@@ -37,7 +37,7 @@ public class ImmutableVerificationMethod implements VerificationMethod {
         return new ImmutableVerificationMethod(id, type, controller, null, null);
     }
 
-    public static final ImmutableVerificationMethod of(final DidUrl id,
+    public static final VerificationMethod of(final DidUrl id,
             final String type,
             final Did controller,
             final String publicKeyMultibase) {
@@ -47,7 +47,7 @@ public class ImmutableVerificationMethod implements VerificationMethod {
         return new ImmutableVerificationMethod(id, type, controller, publicKeyMultibase, null);
     }
 
-    public static final ImmutableVerificationMethod of(final DidUrl id,
+    public static final VerificationMethod of(final DidUrl id,
             final String type,
             final Did controller,
             final Map<String, Object> publicKeyJwk) {

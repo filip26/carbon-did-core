@@ -1,6 +1,7 @@
 package com.apicatalog.did.document;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 
 import com.apicatalog.did.Did;
@@ -15,24 +16,42 @@ public interface DidDocument {
 
     Did id();
 
-    Set<Did> controller();
+    default Set<Did> controller() {
+        return Collections.emptySet();
+    }
 
-    Set<VerificationMethod> verification();
+    default Set<VerificationMethod> verification() {
+        return Collections.emptySet();
+    }
 
-    Set<URI> alsoKnownAs();
+    default Set<URI> alsoKnownAs() {
+        return Collections.emptySet();
+    }
 
-    Set<VerificationMethod> authentication();
+    default Set<VerificationMethod> authentication() {
+        return Collections.emptySet();
+    }
 
-    Set<VerificationMethod> assertion();
+    default Set<VerificationMethod> assertion() {
+        return Collections.emptySet();
+    }
 
-    Set<VerificationMethod> keyAgreement();
+    default Set<VerificationMethod> keyAgreement() {
+        return Collections.emptySet();
+    }
 
-    Set<VerificationMethod> capabilityInvocation();
+    default Set<VerificationMethod> capabilityInvocation() {
+        return Collections.emptySet();
+    }
 
-    Set<VerificationMethod> capabilityDelegation();
+    default Set<VerificationMethod> capabilityDelegation() {
+        return Collections.emptySet();
+    }
 
-    Set<Service> service();
-    
+    default Set<Service> service() {
+        return Collections.emptySet();
+    }
+
     default boolean hasRequiredProperties() {
         return id() != null;
     }
