@@ -24,7 +24,7 @@ An implementation of the Decentralized Identifiers (DIDs) Primitives & API in Ja
 <dependency>
     <groupId>com.apicatalog</groupId>
     <artifactId>carbon-did</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.0</version>
 </dependency>
 ```
 

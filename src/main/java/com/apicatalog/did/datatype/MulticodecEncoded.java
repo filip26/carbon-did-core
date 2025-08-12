@@ -1,4 +1,4 @@
-package com.apicatalog.did.document;
+package com.apicatalog.did.datatype;
 
 public interface MulticodecEncoded {
 

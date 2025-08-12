@@ -9,5 +9,5 @@ public interface DidPresenter {
         String accept();
     }
     
-    DocumentPresentation present(Did did, Options options) throws DidResolutionException;
+    void present(Did did, Options options) throws DidResolutionException;
 }
