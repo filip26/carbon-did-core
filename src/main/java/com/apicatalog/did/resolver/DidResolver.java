@@ -12,24 +12,14 @@ import com.apicatalog.did.document.DidDocument;
  */
 public interface DidResolver {
 
-    interface Options {
-        static final Options EMPTY = new Options() {
-        };
-    }
-
-    default ResolvedDocument resolve(Did did) throws DidResolutionException {
-        return resolve(did, Options.EMPTY);
-    }
-
     /**
      * Resolves the given {@link Did} into {@link DidDocument}
      *
      * @param did     To resolve
-     * @param options
      * @return a new {@link DidDocument} instance
      * 
      * @throws IllegalArgumentException if the given DID cannot be resolved
      * @throws DidResolutionException 
      */
-    ResolvedDocument resolve(Did did, Options options) throws DidResolutionException;
+    ResolvedDocument resolve(Did did) throws DidResolutionException;
 }

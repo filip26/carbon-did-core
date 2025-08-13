@@ -4,10 +4,5 @@ import com.apicatalog.did.Did;
 
 public interface DidPresenter {
 
-    interface Options {
-
-        String accept();
-    }
-    
-    void present(Did did, Options options) throws DidResolutionException;
+    void present(Did did, String accept, PresentationWriterProvider writerProvider) throws DidResolutionException;
 }
