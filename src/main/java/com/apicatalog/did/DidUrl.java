@@ -37,15 +37,10 @@ public class DidUrl extends Did {
         Objects.requireNonNull(did);
         return new DidUrl(
                 did.methodName,
-                did.specificId,
+                did.methodSpecificId,
                 normalizePath(path),
                 normalizeQuery(query),
                 normalizeFragment(fragment));
-    }
-
-    public static DidUrl fragment(final Did did, final String fragment) {
-        Objects.requireNonNull(fragment);
-        return of(did, null, null, fragment);
     }
 
     public static DidUrl of(final URI uri) {
@@ -113,51 +108,9 @@ public class DidUrl extends Did {
         return of(parts[1], ssp, fragment);
     }
 
-    protected static DidUrl of(final String methodName,
-            final String ssp,
-            final String fragment) {
-
-        // Determine end of method-specific-id (stop before first '/' or '?' or end)
-        int msiEndIndex = methodSpecificIdEndIndex(ssp);
-
-        if (msiEndIndex == 0) {
-            throw new IllegalArgumentException("The URI is not a valid DID URL; method-specific-id is empty.");
-        }
-
-        final String methodSpecificId = ssp.substring(0, msiEndIndex);
-
-        validate(methodName, methodSpecificId);
-
-        final String rest = ssp.substring(msiEndIndex); // starts with '/' or '?' or is empty
-
-        // Extract path and query from tail (both raw, without leading markers)
-        String path = null;
-        String query = null;
-
-        if (!rest.isEmpty()) {
-            if (rest.charAt(0) == '/') {
-                // path-abempty: consume path, maybe followed by ?query
-                final int queryIndex = rest.indexOf('?');
-                if (queryIndex == -1) {
-                    path = rest; // includes leading '/'
-                } else {
-                    path = rest.substring(0, queryIndex); // includes leading '/'
-                    query = rest.substring(queryIndex + 1); // without '?'
-                }
-            } else if (rest.charAt(0) == '?') {
-                query = rest.substring(1); // empty query allowed
-            } else {
-                // Should not happen (we only cut at '/' or '?')
-                throw new IllegalArgumentException("The URI is not a valid DID URL; malformed path/query [" + rest + "].");
-            }
-        }
-
-        return new DidUrl(
-                methodName,
-                methodSpecificId,
-                path,
-                query,
-                fragment);
+    public static DidUrl fragment(final Did did, final String fragment) {
+        Objects.requireNonNull(fragment);
+        return of(did, null, null, fragment);
     }
 
     /** @deprecated use {@link DidUrl#of(String)} */
@@ -182,8 +135,8 @@ public class DidUrl extends Did {
         if (uri == null
                 || !SCHEME.equals(uri.getScheme())
                 || isBlank(uri.getRawSchemeSpecificPart())
-                || isNotBlank(uri.getAuthority())
-                || isNotBlank(uri.getUserInfo())
+                || isNotBlank(uri.getRawAuthority())
+                || isNotBlank(uri.getRawUserInfo())
                 || isNotBlank(uri.getHost())) {
             return false;
         }
@@ -235,7 +188,7 @@ public class DidUrl extends Did {
     }
 
     public Did toDid() {
-        return new Did(super.methodName, super.specificId);
+        return new Did(super.methodName, super.methodSpecificId);
     }
 
     @Override
@@ -243,9 +196,9 @@ public class DidUrl extends Did {
         final StringBuilder builder = new StringBuilder()
                 .append(SCHEME).append(':')
                 .append(methodName).append(':')
-                .append(specificId);
+                .append(methodSpecificId);
 
-        appendPathQuery(builder);
+        appendPathAndQuery(builder);
 
         if (fragment != null) {
             builder.append('#');
@@ -257,7 +210,7 @@ public class DidUrl extends Did {
         return builder.toString();
     }
 
-    protected StringBuilder appendPathQuery(final StringBuilder builder) {
+    protected StringBuilder appendPathAndQuery(final StringBuilder builder) {
         if (path != null) {
             if (path.isEmpty() || path.charAt(0) != '/') {
                 builder.append('/');
@@ -290,10 +243,10 @@ public class DidUrl extends Did {
         }
         if (!super.equals(obj)) {
             return false;
-        }
+        }        
         if (getClass() != obj.getClass()) {
             return false;
-        }
+        }        
         DidUrl other = (DidUrl) obj;
         return Objects.equals(fragment, other.fragment) && Objects.equals(path, other.path)
                 && Objects.equals(query, other.query);
@@ -348,5 +301,52 @@ public class DidUrl extends Did {
         }
 
         return msiEndIndex;
+    }
+    
+    static DidUrl of(final String methodName,
+            final String ssp,
+            final String fragment) {
+
+        // Determine end of method-specific-id (stop before first '/' or '?' or end)
+        int msiEndIndex = methodSpecificIdEndIndex(ssp);
+
+        if (msiEndIndex == 0) {
+            throw new IllegalArgumentException("The URI is not a valid DID URL; method-specific-id is empty.");
+        }
+
+        final String methodSpecificId = ssp.substring(0, msiEndIndex);
+
+        validate(methodName, methodSpecificId);
+
+        final String rest = ssp.substring(msiEndIndex); // starts with '/' or '?' or is empty
+
+        // Extract path and query from tail (both raw, without leading markers)
+        String path = null;
+        String query = null;
+
+        if (!rest.isEmpty()) {
+            if (rest.charAt(0) == '/') {
+                // path-abempty: consume path, maybe followed by ?query
+                final int queryIndex = rest.indexOf('?');
+                if (queryIndex == -1) {
+                    path = rest; // includes leading '/'
+                } else {
+                    path = rest.substring(0, queryIndex); // includes leading '/'
+                    query = rest.substring(queryIndex + 1); // without '?'
+                }
+            } else if (rest.charAt(0) == '?') {
+                query = rest.substring(1); // empty query allowed
+            } else {
+                // Should not happen (we only cut at '/' or '?')
+                throw new IllegalArgumentException("The URI is not a valid DID URL; malformed path/query [" + rest + "].");
+            }
+        }
+
+        return new DidUrl(
+                methodName,
+                methodSpecificId,
+                path,
+                query,
+                fragment);
     }
 }

@@ -75,7 +75,7 @@ public class Did implements Serializable {
     /** Lowercase method name. */
     protected final String methodName;
     /** Raw (pct-encoded) method-specific-id, preserved as provided. */
-    protected final String specificId;
+    protected final String methodSpecificId;
 
     /**
      * Creates a DID with already-validated components.
@@ -85,7 +85,7 @@ public class Did implements Serializable {
      */
     protected Did(final String methodName, final String methodSpecificId) {
         this.methodName = methodName;
-        this.specificId = methodSpecificId;
+        this.methodSpecificId = methodSpecificId;
     }
 
     /**
@@ -112,9 +112,9 @@ public class Did implements Serializable {
                 || isNotBlank(uri.getAuthority())
                 || isNotBlank(uri.getUserInfo())
                 || isNotBlank(uri.getHost())
-                || isNotBlank(uri.getPath())
-                || isNotBlank(uri.getQuery())
-                || uri.getFragment() != null) {
+                || isNotBlank(uri.getRawPath())
+                || isNotBlank(uri.getRawQuery())
+                || uri.getRawFragment() != null) {
             return false;
         }
 
@@ -178,9 +178,9 @@ public class Did implements Serializable {
                 || isNotBlank(uri.getAuthority())
                 || isNotBlank(uri.getUserInfo())
                 || isNotBlank(uri.getHost())
-                || isNotBlank(uri.getPath())
-                || isNotBlank(uri.getQuery())
-                || uri.getFragment() != null) {
+                || isNotBlank(uri.getRawPath())
+                || isNotBlank(uri.getRawQuery())
+                || uri.getRawFragment() != null) {
             throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID; it must be in the form 'did:method:method-specific-id'.");
         }
 
@@ -189,7 +189,7 @@ public class Did implements Serializable {
         if (parts.length != 2) {
             throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
         }
-        
+
         validate(parts[0], parts[1]);
 
         return of(parts[0], parts[1]);
@@ -233,9 +233,9 @@ public class Did implements Serializable {
         if (!Did.SCHEME.equals(parts[0])) {
             throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID; it must start with the 'did:' prefix.");
         }
-        
+
         validate(parts[1], parts[2]);
-        
+
         return of(parts[1], parts[2]);
     }
 
@@ -247,8 +247,8 @@ public class Did implements Serializable {
      *                         use pct-encoding where required); no decoding is
      *                         performed
      * @return a new {@code Did}
-     * @throws NullPointerException     if {@code methodName} or
-     *                                  {@code methodSpecificId} is {@code null}
+     * @throws NullPointerException if {@code methodName} or
+     *                              {@code methodSpecificId} is {@code null}
      */
     public static Did of(final String methodName, final String methodSpecificId) {
 
@@ -338,7 +338,6 @@ public class Did implements Serializable {
         return lastSegHasIdChar;
     }
 
-    
     /**
      * Returns the DID method name (lowercase ASCII).
      *
@@ -355,7 +354,7 @@ public class Did implements Serializable {
      * @return raw, pct-encoded method-specific-id
      */
     public String getMethodSpecificId() {
-        return specificId;
+        return methodSpecificId;
     }
 
     /**
@@ -402,16 +401,15 @@ public class Did implements Serializable {
     @Override
     public String toString() {
         return new StringBuilder()
-                .append(SCHEME)
-                .append(':')
-                .append(methodName)
-                .append(':')
-                .append(specificId).toString();
+                .append(SCHEME).append(':')
+                .append(methodName).append(':')
+                .append(methodSpecificId)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(methodName, specificId);
+        return Objects.hash(methodName, methodSpecificId);
     }
 
     @Override
@@ -426,7 +424,7 @@ public class Did implements Serializable {
             return false;
         }
         Did other = (Did) obj;
-        return Objects.equals(methodName, other.methodName) && Objects.equals(specificId, other.specificId);
+        return Objects.equals(methodName, other.methodName) && Objects.equals(methodSpecificId, other.methodSpecificId);
 
     }
 
@@ -444,5 +442,5 @@ public class Did implements Serializable {
      */
     static final boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
-    }    
+    }
 }

@@ -210,7 +210,7 @@ class DidUrlTest {
                         "did:web:example.com?#section1",
                         "web",
                         "example.com",
-                        "", null, "section1"),
+                        null, "", "section1"),
 
                 // DID URL with only query and fragment
                 Arguments.of(
@@ -255,10 +255,10 @@ class DidUrlTest {
                         null, "query=only", "end"),
 
                 Arguments.of(
-                        "did:web:example.com#section#end",
+                        "did:web:example.com#section%23end",
                         "web",
                         "example.com",
-                        null, null, "section#end"),
+                        null, null, "section%23end"),
 
                 // Valid DID URL with a mix of encoded and unencoded parts
                 Arguments.of(
