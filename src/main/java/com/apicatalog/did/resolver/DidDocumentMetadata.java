@@ -1,5 +1,5 @@
 package com.apicatalog.did.resolver;
 
-public interface Metadata {
+public interface DidDocumentMetadata {
 
 }

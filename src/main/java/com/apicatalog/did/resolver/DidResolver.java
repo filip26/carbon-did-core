@@ -15,11 +15,11 @@ public interface DidResolver {
     /**
      * Resolves the given {@link Did} into {@link DidDocument}
      *
-     * @param did     To resolve
+     * @param did To resolve
      * @return a new {@link DidDocument} instance
      * 
      * @throws IllegalArgumentException if the given DID cannot be resolved
-     * @throws DidResolutionException 
+     * @throws DidResolutionException
      */
-    ResolvedDocument resolve(Did did) throws DidResolutionException;
+    ResolvedDidDocument resolve(Did did) throws DidResolutionException;
 }

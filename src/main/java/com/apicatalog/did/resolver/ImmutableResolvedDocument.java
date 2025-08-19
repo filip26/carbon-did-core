@@ -2,14 +2,14 @@ package com.apicatalog.did.resolver;
 
 import com.apicatalog.did.document.DidDocument;
 
-final class ImmutableResolvedDocument implements ResolvedDocument {
+final class ImmutableResolvedDocument implements ResolvedDidDocument {
 
     final DidDocument document;
-    final Metadata meta;
+    final DidDocumentMetadata meta;
     
     ImmutableResolvedDocument(
             final DidDocument document,
-            final Metadata meta
+            final DidDocumentMetadata meta
             ) {
         this.document = document;
         this.meta = meta;
@@ -21,7 +21,7 @@ final class ImmutableResolvedDocument implements ResolvedDocument {
     }
     
     @Override
-    public Metadata metadata() {
+    public DidDocumentMetadata metadata() {
         return meta;
     }
 }
