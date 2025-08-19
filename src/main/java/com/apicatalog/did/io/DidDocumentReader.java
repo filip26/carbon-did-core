@@ -26,7 +26,8 @@ public interface DidDocumentReader {
      *
      * @param is input stream (must not be {@code null})
      * @return parsed {@code DidDocument}
-     * @throws IOException if reading or parsing fails
+     * @throws IOException                if a low-level I/O error occurs
+     * @throws DidDocumentReaderException if parsing or validation fails
      */
-    DidDocument read(InputStream is) throws IOException;
+    DidDocument read(InputStream is) throws IOException, DidDocumentReaderException;
 }

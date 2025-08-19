@@ -11,7 +11,7 @@ An implementation of the Decentralized Identifiers (DIDs) Primitives & API in Ja
 ## Features
 
 * DID, DID URL primitives
-* DID Document API & Primitives
+* DID Document API & primitives
 * DID Resolver API
   * [`did:key`](https://github.com/filip26/carbon-did-key) method
 

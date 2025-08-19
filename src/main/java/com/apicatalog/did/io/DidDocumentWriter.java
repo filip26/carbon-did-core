@@ -26,7 +26,8 @@ public interface DidDocumentWriter {
      *
      * @param document the DID Document to serialize (must not be {@code null})
      * @param os       the output stream to write to (must not be {@code null})
-     * @throws IOException if writing fails
+     * @throws IOException                if a low-level I/O error occurs
+     * @throws DidDocumentWriterException if serialization fails
      */
-    void write(DidDocument document, OutputStream os) throws IOException;
+    void write(DidDocument document, OutputStream os) throws IOException, DidDocumentWriterException;
 }
