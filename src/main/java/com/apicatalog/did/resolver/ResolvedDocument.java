@@ -1,7 +1,6 @@
 package com.apicatalog.did.resolver;
 
 import com.apicatalog.did.document.DidDocument;
-import com.apicatalog.did.primitive.ImmutableResolvedDocument;
 
 public interface ResolvedDocument {
 
@@ -11,11 +10,11 @@ public interface ResolvedDocument {
         return null;
     }
 
-    static ResolvedDocument immutable(DidDocument document) {
-        return ImmutableResolvedDocument.of(document);
+    static ResolvedDocument of(DidDocument document) {
+        return new ImmutableResolvedDocument(document, null);
     }
     
-    static ResolvedDocument immutable(DidDocument document, Metadata meta) {
-        return ImmutableResolvedDocument.of(document, meta);
+    static ResolvedDocument of(DidDocument document, Metadata meta) {
+        return new ImmutableResolvedDocument(document, meta);
     }
 }

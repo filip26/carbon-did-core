@@ -20,7 +20,7 @@ public interface DidDocument {
         return Collections.emptySet();
     }
 
-    default Set<VerificationMethod> verification() {
+    default Set<DidVerificationMethod> verification() {
         return Collections.emptySet();
     }
 
@@ -28,27 +28,27 @@ public interface DidDocument {
         return Collections.emptySet();
     }
 
-    default Set<VerificationMethod> authentication() {
+    default Set<DidVerificationMethod> authentication() {
         return Collections.emptySet();
     }
 
-    default Set<VerificationMethod> assertion() {
+    default Set<DidVerificationMethod> assertion() {
         return Collections.emptySet();
     }
 
-    default Set<VerificationMethod> keyAgreement() {
+    default Set<DidVerificationMethod> keyAgreement() {
         return Collections.emptySet();
     }
 
-    default Set<VerificationMethod> capabilityInvocation() {
+    default Set<DidVerificationMethod> capabilityInvocation() {
         return Collections.emptySet();
     }
 
-    default Set<VerificationMethod> capabilityDelegation() {
+    default Set<DidVerificationMethod> capabilityDelegation() {
         return Collections.emptySet();
     }
 
-    default Set<Service> service() {
+    default Set<DidService> service() {
         return Collections.emptySet();
     }
 

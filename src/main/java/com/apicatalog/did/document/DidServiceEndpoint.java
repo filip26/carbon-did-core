@@ -2,7 +2,7 @@ package com.apicatalog.did.document;
 
 import java.net.URI;
 
-public interface ServiceEndpoint {
+public interface DidServiceEndpoint {
 
     URI id();
 
