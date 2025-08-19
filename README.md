@@ -13,13 +13,11 @@ An implementation of the Decentralized Identifiers (DIDs) Primitives & API in Ja
 * DID, DID URL primitives
 * DID Document API & Primitives
 * DID Resolver API
-  * [`did:key` resolver](https://github.com/filip26/carbon-did-key)
+  * [`did:key`](https://github.com/filip26/carbon-did-key) method
 
 ## Installation
 
-### Carbon DID
-
-#### Maven
+### Maven
 
 ```xml
 <dependency>
@@ -52,7 +50,7 @@ Fork and clone the project repository.
 ## Resources
 
 - [Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/)
-- [Carbon `did:key`](https://github.com/filip26/carbon-did-key)
+- [Carbon DID Key Method](https://github.com/filip26/carbon-did-key)
 
 ## Sponsors
 
