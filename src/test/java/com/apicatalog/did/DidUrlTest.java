@@ -157,18 +157,18 @@ class DidUrlTest {
                         "/",
                         "",
                         ""),
-                
-             // Basic valid DID URLs
+
+                // Basic valid DID URLs
                 Arguments.of(
                         "did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH",
                         "key",
-                        "z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH", 
+                        "z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH",
                         null, null, null),
 
                 Arguments.of(
                         "did:key:z6MkhwTbtMsvDSB8z2pF8A4DRNirMRHkRkNvztNFVQVw1W8H",
                         "key",
-                        "z6MkhwTbtMsvDSB8z2pF8A4DRNirMRHkRkNvztNFVQVw1W8H", 
+                        "z6MkhwTbtMsvDSB8z2pF8A4DRNirMRHkRkNvztNFVQVw1W8H",
                         null, null, null),
 
                 // Valid DID URL with path
@@ -255,7 +255,7 @@ class DidUrlTest {
                         null, "query=only", "end"),
 
                 Arguments.of(
-                        "did:web:example.com#section#end", 
+                        "did:web:example.com#section#end",
                         "web",
                         "example.com",
                         null, null, "section#end"),
@@ -265,9 +265,6 @@ class DidUrlTest {
                         "did:web:example.com/users%2Fjohn%3Fstatus=active#profile",
                         "web",
                         "example.com",
-                        "/users%2Fjohn%3Fstatus=active", null, "profile")
-
-
-                );
+                        "/users%2Fjohn%3Fstatus=active", null, "profile"));
     }
 }

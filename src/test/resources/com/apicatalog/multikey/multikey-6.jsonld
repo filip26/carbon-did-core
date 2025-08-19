@@ -1,7 +1,0 @@
-{
-  "@context": "https://w3id.org/security/multikey/v1",
-  "id": "https://multikey.example/issuer/123#key-0",
-  "type": "Multikey",
-  "controller": "https://multikey.example/issuer/123",
-  "publicKeyMultibase": "z6Mkf5rGMoatrSj1f4CyvuHBeXJELe9RPdzo2PKGNCKVtZxP"
-}

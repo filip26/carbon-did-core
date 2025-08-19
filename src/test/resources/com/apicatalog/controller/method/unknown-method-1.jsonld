@@ -1,8 +1,0 @@
-{
-  "@context": "https://w3id.org/security/multikey/v1",
-  "id": "https://controller.example/#U",
-  "type": "Test",
-  "controller": "https://controller.example/U",
-  "expires": "2025-01-00T00:00:01Z",
-  "revoked": "2024-01-00T00:00:02Z"
-}
