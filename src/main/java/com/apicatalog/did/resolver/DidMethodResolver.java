@@ -24,7 +24,7 @@ public class DidMethodResolver implements DidResolver {
         final DidResolver resolver = resolvers.get(did.getMethod());
 
         if (resolver == null) {
-            throw new DidResolutionException(did, Code.UnsupportedMethod);
+            throw new DidResolutionException(did.toString(), Code.UnsupportedMethod);
         }
         return resolver.resolve(did);
     }

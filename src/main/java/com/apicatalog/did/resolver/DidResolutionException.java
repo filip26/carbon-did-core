@@ -1,7 +1,5 @@
 package com.apicatalog.did.resolver;
 
-import com.apicatalog.did.Did;
-
 /**
  * Exception thrown during DID resolution.
  * <p>
@@ -27,7 +25,7 @@ public class DidResolutionException extends Exception {
         Internal,
     }
 
-    protected final Did did;
+    protected final String did;
     protected final Code code;
 
     /**
@@ -36,7 +34,7 @@ public class DidResolutionException extends Exception {
      * @param did  the DID being resolved (may be {@code null})
      * @param code error code
      */
-    public DidResolutionException(Did did, Code code) {
+    public DidResolutionException(String did, Code code) {
         this.did = did;
         this.code = code;
     }
@@ -48,7 +46,7 @@ public class DidResolutionException extends Exception {
      * @param code    error code
      * @param message detail message
      */
-    public DidResolutionException(Did did, Code code, String message) {
+    public DidResolutionException(String did, Code code, String message) {
         super(message);
         this.did = did;
         this.code = code;
@@ -63,7 +61,7 @@ public class DidResolutionException extends Exception {
      * @param did the DID being resolved (may be {@code null})
      * @param e   the cause
      */
-    public DidResolutionException(Did did, Throwable e) {
+    public DidResolutionException(String did, Throwable e) {
         super(e);
         this.did = did;
         this.code = Code.Internal;
@@ -79,7 +77,7 @@ public class DidResolutionException extends Exception {
      * @param message detail message
      * @param e       the cause
      */
-    public DidResolutionException(Did did, String message, Throwable e) {
+    public DidResolutionException(String did, String message, Throwable e) {
         super(message, e);
         this.did = did;
         this.code = Code.Internal;
@@ -90,7 +88,7 @@ public class DidResolutionException extends Exception {
      *
      * @return the DID, or {@code null}
      */
-    public Did getDid() {
+    public String getDid() {
         return did;
     }
 
