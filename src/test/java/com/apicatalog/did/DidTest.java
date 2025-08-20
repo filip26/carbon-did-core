@@ -32,17 +32,6 @@ class DidTest {
         assertEquals(specificId, did.getMethodSpecificId());
     }
 
-    @DisplayName("!of(String)")
-    @ParameterizedTest()
-    @MethodSource({ "negativeVectors" })
-    void ofStringNegative(String uri) {
-        try {
-            Did.of(uri);
-            fail();
-        } catch (IllegalArgumentException e) {
-            /* expected */ }
-    }
-
     @DisplayName("of(URI)")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
@@ -65,7 +54,18 @@ class DidTest {
         assertEquals(input, did.toString());
     }
 
-    @DisplayName("!of(URI)")
+    @DisplayName("negative: of(String)")
+    @ParameterizedTest()
+    @MethodSource({ "negativeVectors" })
+    void ofStringNegative(String uri) {
+        try {
+            Did.of(uri);
+            fail();
+        } catch (IllegalArgumentException e) {
+            /* expected */ }
+    }
+
+    @DisplayName("negative: of(URI)")
     @ParameterizedTest()
     @MethodSource({ "negativeVectors" })
     void ofUriNegative(String uri) {
@@ -92,8 +92,8 @@ class DidTest {
     void stringIsDid(String uri) {
         assertTrue(Did.isDid(uri));
     }
-
-    @DisplayName("isNotDid(String)")
+    
+    @DisplayName("negative: isDid(String)")
     @ParameterizedTest()
     @MethodSource({ "negativeVectors" })
     void stringIsNotDid(String uri) {

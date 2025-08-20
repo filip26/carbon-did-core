@@ -7,6 +7,7 @@ import com.apicatalog.did.document.DidDocument;
  * A <a href="https://www.w3.org/TR/did-core/#dfn-did-resolvers">DID
  * Resolver</a> expands a {@link Did} into a corresponding {@link DidDocument}.
  */
+@FunctionalInterface
 public interface DidResolver {
 
     /**

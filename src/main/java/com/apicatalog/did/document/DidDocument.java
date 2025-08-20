@@ -1,8 +1,8 @@
 package com.apicatalog.did.document;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 import com.apicatalog.did.Did;
 
@@ -28,7 +28,7 @@ public interface DidDocument {
      *
      * @return controller set, possibly empty
      */
-    default Set<Did> controller() {
+    default Collection<Did> controller() {
         return Collections.emptySet();
     }
 
@@ -38,7 +38,7 @@ public interface DidDocument {
      *
      * @return verification methods, possibly empty
      */
-    default Set<DidVerificationMethod> verification() {
+    default Collection<DidVerificationMethod> verification() {
         return Collections.emptySet();
     }
 
@@ -48,7 +48,7 @@ public interface DidDocument {
      *
      * @return URIs, possibly empty
      */
-    default Set<URI> alsoKnownAs() {
+    default Collection<URI> alsoKnownAs() {
         return Collections.emptySet();
     }
 
@@ -58,7 +58,7 @@ public interface DidDocument {
      *
      * @return authentication methods, possibly empty
      */
-    default Set<DidVerificationMethod> authentication() {
+    default Collection<DidVerificationMethod> authentication() {
         return Collections.emptySet();
     }
 
@@ -67,7 +67,7 @@ public interface DidDocument {
      *
      * @return assertion methods, possibly empty
      */
-    default Set<DidVerificationMethod> assertion() {
+    default Collection<DidVerificationMethod> assertion() {
         return Collections.emptySet();
     }
 
@@ -76,7 +76,7 @@ public interface DidDocument {
      *
      * @return key agreement methods, possibly empty
      */
-    default Set<DidVerificationMethod> keyAgreement() {
+    default Collection<DidVerificationMethod> keyAgreement() {
         return Collections.emptySet();
     }
 
@@ -86,7 +86,7 @@ public interface DidDocument {
      *
      * @return invocation methods, possibly empty
      */
-    default Set<DidVerificationMethod> capabilityInvocation() {
+    default Collection<DidVerificationMethod> capabilityInvocation() {
         return Collections.emptySet();
     }
 
@@ -96,7 +96,7 @@ public interface DidDocument {
      *
      * @return delegation methods, possibly empty
      */
-    default Set<DidVerificationMethod> capabilityDelegation() {
+    default Collection<DidVerificationMethod> capabilityDelegation() {
         return Collections.emptySet();
     }
 
@@ -105,7 +105,7 @@ public interface DidDocument {
      *
      * @return service definitions, possibly empty
      */
-    default Set<DidService> service() {
+    default Collection<DidService> service() {
         return Collections.emptySet();
     }
 
