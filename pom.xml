@@ -20,7 +20,7 @@
     <name>Carbon DID Core</name>
 
     <description>
-        Decentralized Identifiers (DIDs) Primitives &amp; API
+        Core library for Decentralized Identifiers (DIDs) in Java. Provides DID and DID URL primitives, and interfaces for DID Documents and DID Resolvers.
     </description>
 
     <licenses>
