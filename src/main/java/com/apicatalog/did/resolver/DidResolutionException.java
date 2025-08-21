@@ -15,6 +15,9 @@ public class DidResolutionException extends Exception {
      * Standard resolution error codes.
      */
     public enum Code {
+        /** The DID syntax is invalid and cannot be parsed. */
+        InvalidDid,
+
         /** The DID method resolution is not supported. */
         UnsupportedMethod,
 
