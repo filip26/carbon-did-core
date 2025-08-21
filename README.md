@@ -40,7 +40,6 @@ All PR's welcome!
 
 Fork and clone the project repository.
 
-#### Java 1.8
 ```bash
 > cd carbon-did-core
 > mvn clean package
