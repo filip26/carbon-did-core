@@ -87,6 +87,23 @@ public class DidResolutionException extends Exception {
     }
 
     /**
+     * Creates a new resolution exception.
+     * <p>
+     * Code is set to {@link Code#Internal}.
+     * </p>
+     *
+     * @param did     the DID being resolved (may be {@code null})
+     * @param code    error code
+     * @param message detail message
+     * @param e       the cause
+     */
+    public DidResolutionException(String did, Code code, String message, Throwable e) {
+        super(message, e);
+        this.did = did;
+        this.code = code;
+    }
+
+    /**
      * Returns the DID that failed to resolve.
      *
      * @return the DID, or {@code null}
