@@ -8,7 +8,7 @@ An implementation of the [Decentralized Identifiers (DIDs) v1.0](https://www.w3.
 [![javadoc](https://javadoc.io/badge2/com.apicatalog/carbon-did/javadoc.svg)](https://javadoc.io/doc/com.apicatalog/carbon-did)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Features
+## ✨ Features
 
 * DID, DID URL primitives
 * DID Document API & primitives
@@ -55,4 +55,7 @@ Fork and clone the project repository.
 </a> 
 
 ## Commercial Support
-Commercial support is available at filip26@gmail.com
+
+Commercial support and consulting are available.  
+For inquiries, please contact: filip26@gmail.com
+
