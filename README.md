@@ -1,6 +1,20 @@
 # Carbon Decentralized Identifiers
 
-An implementation of the [Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/) in Java.
+Decentralized Identifiers (DIDs) are a W3C standard for creating and resolving 
+persistent, verifiable identifiers without centralized registries or authorities.  
+They enable secure, portable, and self-sovereign identity for people, 
+organizations, and devices.  
+
+Carbon provides a Java implementation of the 
+[Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/) 
+specification, making it easier to build and integrate DID-based solutions 
+in Java applications.
+
+The library defines core primitives such as `Did` and `DidUrl` for working with 
+identifiers, together with interfaces for resolving DIDs into DID Documents. 
+These components form the foundation for parsing, constructing, and resolving 
+identifiers in a modular and extensible way, supporting multiple DID methods 
+and resolution strategies.
 
 [![Java 8 CI](https://github.com/filip26/carbon-did-core/actions/workflows/java8-build.yml/badge.svg)](https://github.com/filip26/carbon-did-core/actions/workflows/java8-build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/dd79aafc6eb14ed18f2217de62585ba7)](https://app.codacy.com/gh/filip26/carbon-did-core/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
