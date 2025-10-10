@@ -16,7 +16,7 @@ These components form the foundation for parsing, constructing, and resolving
 identifiers in a modular and extensible way, supporting multiple DID methods 
 and resolution strategies.
 
-[![Java 8 CI](https://github.com/filip26/carbon-did-core/actions/workflows/java8-build.yml/badge.svg)](https://github.com/filip26/carbon-did-core/actions/workflows/java8-build.yml)
+[![Java 8 CI](https://github.com/filip26/carbon-did-core/actions/workflows/java8-build.yml/badge.svg?branch=main)](https://github.com/filip26/carbon-did-core/actions/workflows/java8-build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/dd79aafc6eb14ed18f2217de62585ba7)](https://app.codacy.com/gh/filip26/carbon-did-core/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![javadoc](https://javadoc.io/badge2/com.apicatalog/carbon-did/javadoc.svg)](https://javadoc.io/doc/com.apicatalog/carbon-did)
 [![Maven Central](https://img.shields.io/maven-central/v/com.apicatalog/carbon-did.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.apicatalog%20AND%20a:carbon-did)
@@ -29,10 +29,10 @@ and resolution strategies.
 * DID Resolver API
   * [`did:key`](https://github.com/filip26/carbon-did-key) method
 
-## Installation
+## 📦 Installation
 
 ### Maven
-
+Add the following dependency to your pom.xml:
 ```xml
 <dependency>
     <groupId>com.apicatalog</groupId>
@@ -41,34 +41,33 @@ and resolution strategies.
 </dependency>
 ```
 
-## Contributing
+## 🤝 Contributing
 
-All PR's welcome!
-
+Contributions are welcome! Please submit a pull request.
 
 ### Building
 
-Fork and clone the project repository.
+Fork and clone the repository, then build with Maven:
 
 ```bash
 > cd carbon-did-core
-> mvn clean package
+> mvn package
 ```
 
-## Resources
+## 📚 Resources
 
 - [W3C Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/)
 - [W3C Controlled Identifiers v1.0](https://www.w3.org/TR/cid-1.0/)
 - [Carbon DID Key Method](https://github.com/filip26/carbon-did-key)
 - [Carbon Controlled Identifiers](https://github.com/filip26/carbon-cid)
 
-## Sponsors
+## 🙏 Sponsors
 
 <a href="https://github.com/digitalbazaar">
   <img src="https://avatars.githubusercontent.com/u/167436?s=200&v=4" width="40" />
 </a> 
 
-## Commercial Support
+## 💼 Commercial Support
 
 Commercial support and consulting are available.  
 For inquiries, please contact: filip26@gmail.com
