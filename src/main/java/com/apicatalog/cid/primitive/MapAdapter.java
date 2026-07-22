@@ -2,6 +2,9 @@ package com.apicatalog.cid.primitive;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 class MapAdapter {
@@ -67,5 +70,40 @@ class MapAdapter {
             return uri.charAt(i) == ':';
         }
         return false;
+    }
+
+    public static Collection<String> stringCollection(Map.Entry<String, Object> entry) {
+
+        if (entry.getValue() instanceof String value) {
+            return List.of(value);
+        }
+
+        if (entry.getValue() instanceof Collection<?> values) {
+            var result = new ArrayList<String>(values.size());
+
+            for (var value : values) {
+                if (!(value instanceof String string)) {
+                    throw new IllegalArgumentException(
+                            "Property '" + entry.getKey()
+                                    + "' must contain only strings.");
+                }
+                result.add(string);
+            }
+
+            return result;
+        }
+
+        throw new IllegalArgumentException(
+                "Property '" + entry.getKey()
+                        + "' must be a string or collection of strings.");
+    }
+
+    public static Collection<Object> collection(Map.Entry<String, Object> entry) {
+
+        if (entry.getValue() instanceof Collection<?> values) {
+            return List.copyOf(values);
+        }
+
+        return List.of(entry.getValue());
     }
 }

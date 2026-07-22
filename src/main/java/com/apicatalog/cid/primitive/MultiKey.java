@@ -50,16 +50,16 @@ public record MultiKey(
             }
 
             switch (entry.getKey()) {
-            case ID_KEY -> id = MapAdapter.url(entry);
-            case TYPE_KEY -> {
+            case Vocab.ID_KEY -> id = MapAdapter.url(entry);
+            case Vocab.TYPE_KEY -> {
                 if (!TYPE_NAME.equals(entry.getValue())) {
                     throw new IllegalArgumentException(
                             "Expected type '" + TYPE_NAME + "' but found '" + entry.getValue() + '\'');
                 }
             }
-            case CONTROLLER_KEY -> controller = MapAdapter.url(entry);
-            case EXPIRES_KEY -> expires = MapAdapter.instant(entry);
-            case REVOKED_KEY -> revoked = MapAdapter.instant(entry);
+            case Vocab.CONTROLLER_KEY -> controller = MapAdapter.url(entry);
+            case Vocab.EXPIRES_KEY -> expires = MapAdapter.instant(entry);
+            case Vocab.REVOKED_KEY -> revoked = MapAdapter.instant(entry);
             case PUBLIC_KEY_MULTIBASE_KEY -> publicKey = multibaseDecoder.apply(MapAdapter.string(entry));
             case SECRET_KEY_MULTIBASE_KEY -> secretKey = multibaseDecoder.apply(MapAdapter.string(entry));
 
