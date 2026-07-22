@@ -8,6 +8,7 @@ package com.apicatalog.did.datatype;
  * Provides access to the encoding base and the decoded (binary) value.
  * </p>
  */
+@Deprecated
 public interface MultibaseEncoded {
 
     /**

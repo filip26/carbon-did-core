@@ -1,9 +1,9 @@
 package com.apicatalog.did.document;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.apicatalog.cid.Service;
 import com.apicatalog.did.Did;
 
 /**
@@ -48,7 +48,7 @@ public interface DidDocument {
      *
      * @return URIs, possibly empty
      */
-    default Collection<URI> alsoKnownAs() {
+    default Collection<String> alsoKnownAs() {
         return Collections.emptySet();
     }
 
@@ -105,7 +105,7 @@ public interface DidDocument {
      *
      * @return service definitions, possibly empty
      */
-    default Collection<DidService> service() {
+    default Collection<Service> service() {
         return Collections.emptySet();
     }
 

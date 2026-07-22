@@ -3,6 +3,7 @@ package com.apicatalog.did.document;
 import java.net.URI;
 import java.util.Collection;
 
+
 final class ImmutableService implements DidService {
 
     final URI id;

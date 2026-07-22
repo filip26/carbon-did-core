@@ -5,7 +5,7 @@
  * <p>
  * Includes interfaces for representing DID Documents
  * ({@link com.apicatalog.did.document.DidDocument}), services
- * ({@link com.apicatalog.did.document.DidService},
+ * ({@link com.apicatalog.cid.Service},
  * {@link com.apicatalog.did.document.DidServiceEndpoint}), and verification
  * methods ({@link com.apicatalog.did.document.DidVerificationMethod}).
  * </p>

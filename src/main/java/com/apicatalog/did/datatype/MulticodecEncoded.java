@@ -7,6 +7,7 @@ package com.apicatalog.did.datatype;
  * Provides access to the codec code and the decoded (binary) value.
  * </p>
  */
+@Deprecated
 public interface MulticodecEncoded {
 
     /**

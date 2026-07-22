@@ -136,7 +136,7 @@ public record GenericDidUrl(
 
         Objects.requireNonNull(uri);
 
-        if (uri.isEmpty()) {
+        if (uri.isBlank()) {
             throw new IllegalArgumentException("DID URL string must not be blank.");
         }
 
@@ -383,7 +383,8 @@ public record GenericDidUrl(
      * @throws IllegalArgumentException if method-specific-id is empty or the tail
      *                                  is malformed
      */
-    private static GenericDidUrl of(final String methodName,
+    private static GenericDidUrl of(
+            final String methodName,
             final String ssp,
             final String fragment) {
 
