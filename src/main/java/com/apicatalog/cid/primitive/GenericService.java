@@ -1,6 +1,8 @@
-package com.apicatalog.cid;
+package com.apicatalog.cid.primitive;
 
 import java.util.Collection;
+
+import com.apicatalog.cid.Service;
 
 /**
  * Represents a generic <a href="https://www.w3.org/TR/cid-1.0/#services">CID

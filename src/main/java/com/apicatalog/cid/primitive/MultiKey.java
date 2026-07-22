@@ -1,8 +1,10 @@
-package com.apicatalog.cid.method;
+package com.apicatalog.cid.primitive;
 
 import java.time.Instant;
 import java.util.Map;
 import java.util.function.Function;
+
+import com.apicatalog.cid.VerificationMethod;
 
 public record MultiKey(
         String id,
@@ -24,13 +26,13 @@ public record MultiKey(
     }
 
     /**
-     * Creates a {@link MultiKey} verification method from a compacted JSON-LD
-     * representation.
+     * Creates a {@link MultiKey} verification method from a compacted object.
      *
      * @param compacted        compacted verification method object
      * @param multibaseDecoder
-     * @return parsed multikey verification method
-     * @throws IllegalArgumentException if a property has an invalid type
+     * @return verification method
+     * @throws IllegalArgumentException if the input contains invalid or unsupported
+     *                                  properties
      */
     public static MultiKey from(Map<String, Object> compacted, Function<String, byte[]> multibaseDecoder) {
 

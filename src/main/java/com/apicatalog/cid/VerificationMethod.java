@@ -1,4 +1,4 @@
-package com.apicatalog.cid.method;
+package com.apicatalog.cid;
 
 import java.time.Instant;
 

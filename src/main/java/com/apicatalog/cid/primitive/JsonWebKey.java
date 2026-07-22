@@ -1,7 +1,9 @@
-package com.apicatalog.cid.method;
+package com.apicatalog.cid.primitive;
 
 import java.time.Instant;
 import java.util.Map;
+
+import com.apicatalog.cid.VerificationMethod;
 
 /**
  * Represents a JSON Web Key (JWK) verification method in accordance with the
@@ -64,7 +66,7 @@ public record JsonWebKey(
      * </p>
      *
      * @param compacted compacted object
-     * @return parsed verification method
+     * @return verification method
      * @throws IllegalArgumentException if the input contains invalid or unsupported
      *                                  properties
      */

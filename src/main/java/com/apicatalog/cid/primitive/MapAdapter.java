@@ -1,10 +1,10 @@
-package com.apicatalog.cid.method;
+package com.apicatalog.cid.primitive;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 
-public class MapAdapter {
+class MapAdapter {
 
     public static String string(Map.Entry<String, Object> entry) {
         if (entry.getValue() instanceof String value) {
