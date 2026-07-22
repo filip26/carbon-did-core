@@ -1,5 +1,5 @@
 /**
- * Core classes for working with
+ * Core interfaces for working with
  * <a href="https://www.w3.org/TR/did-core/">Decentralized Identifiers
  * (DIDs)</a>.
  * <p>

@@ -7,20 +7,23 @@
     <groupId>com.apicatalog</groupId>
     <artifactId>carbon-did</artifactId>
 
-	<version>0.9.2</version>
-	<packaging>jar</packaging>
+    <version>1.0.0-M1</version>
+    <packaging>jar</packaging>
 
-	<url>https://github.com/filip26/carbon-did-core</url>
-	<scm>
-		<connection>scm:git:git://github.com/filip26/carbon-did-core.git</connection>
-		<developerConnection>scm:git:git://github.com/filip26/carbon-did-core.git</developerConnection>
-		<url>https://github.com/filip26/carbon-did-core/tree/main</url>
-	</scm>
+    <url>https://github.com/filip26/carbon-did-core</url>
+    <scm>
+        <connection>scm:git:git://github.com/filip26/carbon-did-core.git</connection>
+        <developerConnection>
+            scm:git:git://github.com/filip26/carbon-did-core.git</developerConnection>
+        <url>https://github.com/filip26/carbon-did-core/tree/main</url>
+    </scm>
 
     <name>Carbon DID Core</name>
 
     <description>
-        Core library for Decentralized Identifiers (DIDs) in Java. Provides DID and DID URL primitives, and interfaces for DID Documents and DID Resolvers.
+        Core library for Decentralized Identifiers (DIDs) in Java. Provides DID
+        and DID URL primitives, and interfaces for DID Documents and DID
+        Resolvers.
     </description>
 
     <licenses>
@@ -31,10 +34,10 @@
     </licenses>
 
 
-	<issueManagement>
-		<system>github</system>
-		<url>https://github.com/filip26/carbon-did-core/issues</url>
-	</issueManagement>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/filip26/carbon-did-core/issues</url>
+    </issueManagement>
 
     <developers>
         <developer>
@@ -54,11 +57,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <argLine>-Dfile.encoding=UTF-8</argLine>
 
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
 
         <!-- test resources -->
-        <junit.version>5.13.4</junit.version>
+        <junit.version>6.1.0</junit.version>
     </properties>
     <dependencies>
         <!-- Tests -->
@@ -157,7 +160,7 @@
                             </execution>
                         </executions>
                     </plugin>
-					<plugin>
+                    <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <version>0.8.0</version>

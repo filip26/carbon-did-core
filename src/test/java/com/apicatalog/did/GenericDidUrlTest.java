@@ -14,45 +14,43 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@DisplayName("DID URL")
+@DisplayName("GenericDidUrl")
 @TestMethodOrder(OrderAnnotation.class)
-class DidUrlTest {
+class GenericDidUrlTest {
 
     @DisplayName("of(String)")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void ofString(String uri, String method, String specificId, String path, String query, String fragment) {
-        final DidUrl didUrl = DidUrl.of(uri);
+        final GenericDidUrl didUrl = GenericDidUrl.parse(uri);
 
         assertNotNull(didUrl);
-        assertTrue(didUrl.isDidUrl());
-        assertEquals(method, didUrl.getMethod());
-        assertEquals(specificId, didUrl.getMethodSpecificId());
-        assertEquals(path, didUrl.getPath());
-        assertEquals(query, didUrl.getQuery());
-        assertEquals(fragment, didUrl.getFragment());
+        assertEquals(method, didUrl.method());
+        assertEquals(specificId, didUrl.methodSpecificId());
+        assertEquals(path, didUrl.path());
+        assertEquals(query, didUrl.query());
+        assertEquals(fragment, didUrl.fragment());
     }
 
     @DisplayName("of(URI)")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void ofUri(String input, String method, String specificId, String path, String query, String fragment) {
-        final DidUrl didUrl = DidUrl.of(URI.create(input));
+        final GenericDidUrl didUrl = GenericDidUrl.from(URI.create(input));
 
         assertNotNull(didUrl);
-        assertTrue(didUrl.isDidUrl());
-        assertEquals(method, didUrl.getMethod());
-        assertEquals(specificId, didUrl.getMethodSpecificId());
-        assertEquals(path, didUrl.getPath());
-        assertEquals(query, didUrl.getQuery());
-        assertEquals(fragment, didUrl.getFragment());
+        assertEquals(method, didUrl.method());
+        assertEquals(specificId, didUrl.methodSpecificId());
+        assertEquals(path, didUrl.path());
+        assertEquals(query, didUrl.query());
+        assertEquals(fragment, didUrl.fragment());
     }
 
     @DisplayName("toUri()")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void toUri(String input, String method, String specificId, String path, String query, String fragment) {
-        final DidUrl didUrl = DidUrl.of(URI.create(input));
+        final GenericDidUrl didUrl = GenericDidUrl.from(URI.create(input));
 
         assertNotNull(didUrl);
         assertEquals(URI.create(input), didUrl.toUri());
@@ -62,21 +60,21 @@ class DidUrlTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void stringIsDid(String uri) {
-        assertTrue(DidUrl.isDidUrl(uri));
+        assertTrue(GenericDidUrl.isDidUrl(uri));
     }
 
     @DisplayName("isDidUrl(URI)")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void uriIsDid(String uri) {
-        assertTrue(DidUrl.isDidUrl(URI.create(uri)));
+        assertTrue(GenericDidUrl.isDidUrl(URI.create(uri)));
     }
 
     @DisplayName("toString()")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void toString(String input) {
-        final DidUrl didUrl = DidUrl.of(input);
+        final GenericDidUrl didUrl = GenericDidUrl.parse(input);
 
         assertNotNull(didUrl);
         assertEquals(input, didUrl.toString());

@@ -21,7 +21,7 @@ public class DidMethodResolver implements DidResolver {
 
         Objects.requireNonNull(did);
 
-        final DidResolver resolver = resolvers.get(did.getMethod());
+        final DidResolver resolver = resolvers.get(did.method());
 
         if (resolver == null) {
             throw new DidResolutionException(did.toString(), Code.UnsupportedMethod);
