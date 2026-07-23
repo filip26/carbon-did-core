@@ -1,5 +1,6 @@
 package com.apicatalog.cid;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -12,6 +13,17 @@ public interface IdentifierDocument<I, L> {
         KEY_AGREEMENT,
         CAPABILITY_INVOCATION,
         CAPABILITY_DELETATION
+    }
+    
+    interface Method<I, L> {
+
+        L id();
+        String type();
+        I controller();
+        
+        Instant expires();
+        Instant revoked();
+        
     }
 
     /**
@@ -42,9 +54,9 @@ public interface IdentifierDocument<I, L> {
 
     Collection<Relationship> relationships();
 
-    Collection<L> methods(Relationship relationship);
+    Method<I, L> methods(Relationship relationship);
 
-    VerificationMethod<I, L> dereference(String fragment);
+    Collection<L> remoteMethods(Relationship relationship);
 
     /**
      * The {@code service} property: service endpoints in this document.

@@ -24,7 +24,7 @@ class GenericDidTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void ofString(String uri, String method, String specificId) {
-        final Did did = GenericDid.parse(uri);
+        final Did did = Did.parse(uri);
 
         assertNotNull(did);
         assertEquals(method, did.method());
@@ -35,7 +35,7 @@ class GenericDidTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void ofUri(String input, String method, String specificId) {
-        final Did did = GenericDid.from(URI.create(input));
+        final Did did = Did.from(URI.create(input));
 
         assertNotNull(did);
         assertEquals(method, did.method());
@@ -46,7 +46,7 @@ class GenericDidTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void toString(String input, String method, String specificId) {
-        final Did did = GenericDid.parse(input);
+        final Did did = Did.parse(input);
 
         assertNotNull(did);
         assertEquals(input, did.toString());
@@ -57,7 +57,7 @@ class GenericDidTest {
     @MethodSource({ "negativeVectors" })
     void ofStringNegative(String uri) {
         try {
-            GenericDid.parse(uri);
+            Did.parse(uri);
             fail();
         } catch (IllegalArgumentException e) {
             /* expected */ }
@@ -68,7 +68,7 @@ class GenericDidTest {
     @MethodSource({ "negativeVectors" })
     void ofUriNegative(String uri) {
         try {
-            GenericDid.from(URI.create(uri));
+            Did.from(URI.create(uri));
             fail();
         } catch (IllegalArgumentException | NullPointerException e) {
             /* expected */ }
@@ -78,7 +78,7 @@ class GenericDidTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void toUri(String input, String method, String specificId) {
-        var did = GenericDid.from(URI.create(input));
+        var did = Did.from(URI.create(input));
 
         assertNotNull(did);
         assertEquals(URI.create(input), did.toUri());
@@ -88,21 +88,21 @@ class GenericDidTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void stringIsDid(String uri) {
-        assertTrue(GenericDid.isDid(uri));
+        assertTrue(Did.isDid(uri));
     }
     
     @DisplayName("negative: isDid(String)")
     @ParameterizedTest()
     @MethodSource({ "negativeVectors" })
     void stringIsNotDid(String uri) {
-        assertFalse(GenericDid.isDid(uri));
+        assertFalse(Did.isDid(uri));
     }
 
     @DisplayName("isDid(URI)")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void uriIsDid(String uri) {
-        assertTrue(GenericDid.isDid(URI.create(uri)));
+        assertTrue(Did.isDid(URI.create(uri)));
     }
 
     static Stream<Arguments> positiveVectors() {

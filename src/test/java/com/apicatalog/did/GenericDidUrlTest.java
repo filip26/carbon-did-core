@@ -22,7 +22,7 @@ class GenericDidUrlTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void ofString(String uri, String method, String specificId, String path, String query, String fragment) {
-        final GenericDidUrl didUrl = GenericDidUrl.parse(uri);
+        final DidUrl didUrl = DidUrl.parse(uri);
 
         assertNotNull(didUrl);
         assertEquals(method, didUrl.method());
@@ -36,7 +36,7 @@ class GenericDidUrlTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void ofUri(String input, String method, String specificId, String path, String query, String fragment) {
-        final GenericDidUrl didUrl = GenericDidUrl.from(URI.create(input));
+        final DidUrl didUrl = DidUrl.from(URI.create(input));
 
         assertNotNull(didUrl);
         assertEquals(method, didUrl.method());
@@ -50,7 +50,7 @@ class GenericDidUrlTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void toUri(String input, String method, String specificId, String path, String query, String fragment) {
-        final GenericDidUrl didUrl = GenericDidUrl.from(URI.create(input));
+        final DidUrl didUrl = DidUrl.from(URI.create(input));
 
         assertNotNull(didUrl);
         assertEquals(URI.create(input), didUrl.toUri());
@@ -60,21 +60,21 @@ class GenericDidUrlTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void stringIsDid(String uri) {
-        assertTrue(GenericDidUrl.isDidUrl(uri));
+        assertTrue(DidUrl.isDidUrl(uri));
     }
 
     @DisplayName("isDidUrl(URI)")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void uriIsDid(String uri) {
-        assertTrue(GenericDidUrl.isDidUrl(URI.create(uri)));
+        assertTrue(DidUrl.isDidUrl(URI.create(uri)));
     }
 
     @DisplayName("toString()")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
     void toString(String input) {
-        final GenericDidUrl didUrl = GenericDidUrl.parse(input);
+        final DidUrl didUrl = DidUrl.parse(input);
 
         assertNotNull(didUrl);
         assertEquals(input, didUrl.toString());
