@@ -1,4 +1,4 @@
-package com.apicatalog.cid.primitive;
+package com.apicatalog.did.primitive;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import com.apicatalog.did.Did;
+import com.apicatalog.did.DidUrl;
 
 class MapAdapter {
 
@@ -34,6 +37,16 @@ class MapAdapter {
         }
         throw new IllegalArgumentException(
                 "Property '" + entry.getKey() + "' must be a JSON object.");
+    }
+
+    public static DidUrl didUrl(Map.Entry<String, Object> entry) {
+        var value = string(entry);
+        return DidUrl.parse(value);
+    }
+
+    public static Did did(Map.Entry<String, Object> entry) {
+        var value = string(entry);
+        return Did.parse(value);
     }
 
     public static String url(Map.Entry<String, Object> entry) {

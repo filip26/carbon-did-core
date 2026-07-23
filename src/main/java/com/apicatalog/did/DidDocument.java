@@ -3,9 +3,6 @@ package com.apicatalog.did;
 import java.util.Collection;
 import java.util.Collections;
 
-import com.apicatalog.cid.Service;
-import com.apicatalog.did.primitive.DidVerificationMethod;
-
 /**
  * A <a href="https://www.w3.org/TR/did-core/#did-document-properties">DID
  * Document</a>.
@@ -15,6 +12,15 @@ import com.apicatalog.did.primitive.DidVerificationMethod;
  * </p>
  */
 public interface DidDocument {
+
+    public enum Relationship {
+        VERIFICATION, // generic
+        AUTHENTICATION,
+        ASSERTION,
+        KEY_AGREEMENT,
+        CAPABILITY_INVOCATION,
+        CAPABILITY_DELETATION
+    }
 
     /**
      * The {@code id} property: the primary identifier of the DID subject.
@@ -33,16 +39,6 @@ public interface DidDocument {
     }
 
     /**
-     * The {@code verificationMethod} property: verification methods defined in this
-     * document.
-     *
-     * @return verification methods, possibly empty
-     */
-    default Collection<DidVerificationMethod> verification() {
-        return Collections.emptySet();
-    }
-
-    /**
      * The {@code alsoKnownAs} property: additional URIs that refer to the same
      * subject.
      *
@@ -53,61 +49,19 @@ public interface DidDocument {
     }
 
     /**
-     * The {@code authentication} relationship: methods that can authenticate as the
-     * DID subject.
-     *
-     * @return authentication methods, possibly empty
-     */
-    default Collection<DidVerificationMethod> authentication() {
-        return Collections.emptySet();
-    }
-
-    /**
-     * The {@code assertionMethod} relationship: methods for asserting claims.
-     *
-     * @return assertion methods, possibly empty
-     */
-    default Collection<DidVerificationMethod> assertion() {
-        return Collections.emptySet();
-    }
-
-    /**
-     * The {@code keyAgreement} relationship: methods for key agreement.
-     *
-     * @return key agreement methods, possibly empty
-     */
-    default Collection<DidVerificationMethod> keyAgreement() {
-        return Collections.emptySet();
-    }
-
-    /**
-     * The {@code capabilityInvocation} relationship: methods for invoking
-     * capabilities.
-     *
-     * @return invocation methods, possibly empty
-     */
-    default Collection<DidVerificationMethod> capabilityInvocation() {
-        return Collections.emptySet();
-    }
-
-    /**
-     * The {@code capabilityDelegation} relationship: methods for delegating
-     * capabilities.
-     *
-     * @return delegation methods, possibly empty
-     */
-    default Collection<DidVerificationMethod> capabilityDelegation() {
-        return Collections.emptySet();
-    }
-
-    /**
      * The {@code service} property: service endpoints in this document.
      *
      * @return service definitions, possibly empty
      */
-    default Collection<Service> service() {
+    default Collection<DidService> service() {
         return Collections.emptySet();
     }
+
+    Collection<Relationship> relationships();
+
+    Collection<DidVerificationMethod> methods(Relationship relationship);
+
+    Collection<DidUrl> remoteMethods(Relationship relationship);
 
     /**
      * Checks whether this document has the required {@code id} property.

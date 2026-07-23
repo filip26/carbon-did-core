@@ -1,4 +1,4 @@
-package com.apicatalog.cid.primitive;
+package com.apicatalog.did.primitive;
 
 class Vocab {
 

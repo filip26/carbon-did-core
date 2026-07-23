@@ -1,23 +1,21 @@
-package com.apicatalog.cid.primitive;
+package com.apicatalog.did.primitive;
 
 import java.time.Instant;
 import java.util.Map;
 
-import com.apicatalog.cid.VerificationMethod;
+import com.apicatalog.did.Did;
+import com.apicatalog.did.DidUrl;
+import com.apicatalog.did.DidVerificationMethod;
 
 /**
  * Represents a JSON Web Key (JWK) verification method in accordance with the
- * W3C CID 1.0 specification.
+ * W3C DID 1.1 specification.
  *
  * <p>
  * This record encapsulates cryptographic keys formatted as JSON Web Keys (RFC
  * 7517), enabling the representation of both public and private key material
  * along with decentralized identity metadata such as controller association and
  * lifecycle timestamps.
- * </p>
- *
- * <p>
- * Reference: <a href="https://www.w3.org/TR/cid-1.0/#JsonWebKey">JsonWebKey</a>
  * </p>
  *
  * @param id           The unique identifier of the verification method.
@@ -32,12 +30,12 @@ import com.apicatalog.cid.VerificationMethod;
  *                     format.
  */
 public record JsonWebKey(
-        String id,
-        String controller,
+        DidUrl id,
+        Did controller,
         Instant expires,
         Instant revoked,
         Map<String, Object> publicKeyJwk,
-        Map<String, Object> secretKeyJwk) implements VerificationMethod {
+        Map<String, Object> secretKeyJwk) implements DidVerificationMethod {
 
     /** Verification method type. */
     public static final String TYPE = "https://w3id.org/security#JsonWebKey";
@@ -66,8 +64,8 @@ public record JsonWebKey(
      */
     public static JsonWebKey from(Map<String, Object> compacted) {
 
-        String id = null;
-        String controller = null;
+        DidUrl id = null;
+        Did controller = null;
         Instant expires = null;
         Instant revoked = null;
         Map<String, Object> publicKeyJwk = null;
@@ -80,14 +78,14 @@ public record JsonWebKey(
             }
 
             switch (entry.getKey()) {
-            case Vocab.KEY_ID -> id = MapAdapter.url(entry);
+            case Vocab.KEY_ID -> id = MapAdapter.didUrl(entry);
             case Vocab.KEY_TYPE -> {
                 if (!TYPE_NAME.equals(entry.getValue())) {
                     throw new IllegalArgumentException(
                             "Expected type '" + TYPE_NAME + "' but found '" + entry.getValue() + '\'');
                 }
             }
-            case Vocab.KEY_CONTROLLER -> controller = MapAdapter.url(entry);
+            case Vocab.KEY_CONTROLLER -> controller = MapAdapter.did(entry);
             case Vocab.KEY_EXPIRES -> expires = MapAdapter.instant(entry);
             case Vocab.KEY_REVOKED -> revoked = MapAdapter.instant(entry);
             case Vocab.KEY_PUBLIC_KEY_JWK -> publicKeyJwk = MapAdapter.object(entry);

@@ -1,11 +1,6 @@
 package com.apicatalog.did;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
-
-import com.apicatalog.did.primitive.DidServiceEndpoint;
-import com.apicatalog.did.primitive.ImmutableService;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#services">DID Document
@@ -23,7 +18,7 @@ public interface DidService {
      *
      * @return the unique service identifier
      */
-    URI id();
+    String id();
 
     /**
      * The {@code type} values of this service.
@@ -33,11 +28,11 @@ public interface DidService {
     Collection<String> type();
 
     /**
-     * The {@code serviceEndpoint} values of this service.
+     * Determines if the service has at least one endpoint.
      *
-     * @return one or more endpoints
+     * @return true if endpoints is not null and not empty, false otherwise
      */
-    Collection<DidServiceEndpoint> endpoint();
+    boolean hasEndpoint();
 
     /**
      * Checks whether this service has the required properties: {@code id},
@@ -46,43 +41,8 @@ public interface DidService {
      * @return {@code true} if valid
      */
     default boolean hasRequiredProperties() {
-        return id() != null && type() != null && endpoint() != null && !endpoint().isEmpty();
+        return id() != null
+                && type() != null && !type().isEmpty()
+                && hasEndpoint();
     }
-
-    /**
-     * Creates a {@code DidService} with a single type and a single endpoint.
-     *
-     * @param id       service id
-     * @param type     service type
-     * @param endpoint service endpoint
-     * @return a new {@code DidService}
-     */
-    static DidService of(URI id, String type, DidServiceEndpoint endpoint) {
-        return new ImmutableService(id, Collections.singleton(type), Collections.singleton(endpoint));
-    }
-
-    /**
-     * Creates a {@code DidService} with a single type and multiple endpoints.
-     *
-     * @param id       service id
-     * @param type     service type
-     * @param endpoint service endpoints
-     * @return a new {@code DidService}
-     */
-    static DidService of(URI id, String type, Collection<DidServiceEndpoint> endpoint) {
-        return new ImmutableService(id, Collections.singleton(type), endpoint);
-    }
-
-    /**
-     * Creates a {@code DidService} with multiple types and endpoints.
-     *
-     * @param id       service id
-     * @param type     service types
-     * @param endpoint service endpoints
-     * @return a new {@code DidService}
-     */
-    static DidService of(URI id, Collection<String> type, Collection<DidServiceEndpoint> endpoint) {
-        return new ImmutableService(id, type, endpoint);
-    }
-
 }

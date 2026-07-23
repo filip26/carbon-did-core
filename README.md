@@ -1,8 +1,13 @@
 # Carbon Decentralized Identifiers
 
-An implementation of the [Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/) in Java.
+[Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/) and [DID Resolution](https://w3c.github.io/did-resolution/) support identity systems where identifiers are controlled by their owners rather than by centralized authorities.
 
-[![Java 8 CI](https://github.com/filip26/carbon-did-core/actions/workflows/java8-build.yml/badge.svg)](https://github.com/filip26/carbon-did-core/actions/workflows/java8-build.yml)
+DIDs allow entities to create persistent, globally resolvable identifiers and prove control over them using cryptographic keys. This enables portable and verifiable identity without depending on a single identity provider, registry, or intermediary.
+
+Carbon provides primitives for creating, resolving, and verifying DID documents and DID-based identities.
+
+
+[![Java 25 CI](https://github.com/filip26/carbon-did-core/actions/workflows/java25-build.yml/badge.svg)](https://github.com/filip26/carbon-did-core/actions/workflows/java25-build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/dd79aafc6eb14ed18f2217de62585ba7)](https://app.codacy.com/gh/filip26/carbon-did-core/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Maven Central](https://img.shields.io/maven-central/v/com.apicatalog/carbon-did.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.apicatalog%20AND%20a:carbon-did)
 [![javadoc](https://javadoc.io/badge2/com.apicatalog/carbon-did/javadoc.svg)](https://javadoc.io/doc/com.apicatalog/carbon-did)
@@ -10,9 +15,8 @@ An implementation of the [Decentralized Identifiers (DIDs) v1.0](https://www.w3.
 
 ## ✨ Features
 
-* DID, DID URL primitives
-* DID Document API & primitives
-* DID Resolver API
+* DID, DID URL, and DID Document primitives
+* DID Resolver
   * [`did:key`](https://github.com/filip26/carbon-did-key) method
 
 ## Installation
@@ -23,39 +27,24 @@ An implementation of the [Decentralized Identifiers (DIDs) v1.0](https://www.w3.
 <dependency>
     <groupId>com.apicatalog</groupId>
     <artifactId>carbon-did</artifactId>
-    <version>0.9.2</version>
+    <version>${did.version}</version>
 </dependency>
 ```
 
-## Contributing
+## 🤝 Contributing
 
-All PR's welcome!
+Contributions of all kinds are welcome - whether it’s code, documentation, testing, or community support! Please open PR or issue to get started.
 
-
-### Building
-
-Fork and clone the project repository.
-
-```bash
-> cd carbon-did-core
-> mvn clean package
-```
-
-## Resources
+## 📚 Resources
 
 - [W3C Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/)
+- [Decentralized Identifier Resolution (DID Resolution) v1](https://w3c.github.io/did-resolution/)
 - [W3C Controlled Identifiers v1.0](https://www.w3.org/TR/cid-1.0/)
 - [Carbon DID Key Method](https://github.com/filip26/carbon-did-key)
-- [Carbon Controlled Identifiers](https://github.com/filip26/carbon-cid)
 
-## Sponsors
+## 💼 Commercial Support
 
-<a href="https://github.com/digitalbazaar">
-  <img src="https://avatars.githubusercontent.com/u/167436?s=200&v=4" width="40" />
-</a> 
-
-## Commercial Support
-
-Commercial support and consulting are available.  
+Commercial support and consulting are available.
 For inquiries, please contact: filip26@gmail.com
+
 
