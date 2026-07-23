@@ -2,11 +2,11 @@ package com.apicatalog.cid;
 
 import java.time.Instant;
 
-public interface VerificationMethod {
+public interface VerificationMethod<I, L> {
 
-    String id();
+    L id();
     String type();
-    String controller();
+    I controller();
     
     Instant expires();
     Instant revoked();
