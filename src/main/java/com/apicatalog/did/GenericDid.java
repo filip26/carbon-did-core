@@ -149,8 +149,6 @@ public record GenericDid(
                     "The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
         }
 
-        validate(parts[0], parts[1]);
-
         return of(parts[0], parts[1]);
     }
 
@@ -186,8 +184,6 @@ public record GenericDid(
             throw new IllegalArgumentException(
                     "The URI [" + uri + "] is not a valid DID; it must start with the 'did:' prefix.");
         }
-
-        validate(parts[1], parts[2]);
 
         return of(parts[1], parts[2]);
     }

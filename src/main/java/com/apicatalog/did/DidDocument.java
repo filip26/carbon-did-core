@@ -1,10 +1,10 @@
-package com.apicatalog.did.document;
+package com.apicatalog.did;
 
 import java.util.Collection;
 import java.util.Collections;
 
 import com.apicatalog.cid.Service;
-import com.apicatalog.did.Did;
+import com.apicatalog.did.primitive.DidVerificationMethod;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#did-document-properties">DID

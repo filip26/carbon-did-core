@@ -1,8 +1,11 @@
-package com.apicatalog.did.document;
+package com.apicatalog.did;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+
+import com.apicatalog.did.primitive.DidServiceEndpoint;
+import com.apicatalog.did.primitive.ImmutableService;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#services">DID Document

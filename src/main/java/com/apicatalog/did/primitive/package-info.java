@@ -4,10 +4,10 @@
  * specification</a>.
  * <p>
  * Includes interfaces for representing DID Documents
- * ({@link com.apicatalog.did.document.DidDocument}), services
+ * ({@link com.apicatalog.did.DidDocument}), services
  * ({@link com.apicatalog.cid.Service},
- * {@link com.apicatalog.did.document.DidServiceEndpoint}), and verification
- * methods ({@link com.apicatalog.did.document.DidVerificationMethod}).
+ * {@link com.apicatalog.did.primitive.DidServiceEndpoint}), and verification
+ * methods ({@link com.apicatalog.did.primitive.DidVerificationMethod}).
  * </p>
  */
-package com.apicatalog.did.document;
+package com.apicatalog.did.primitive;

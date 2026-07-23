@@ -1,4 +1,4 @@
-package com.apicatalog.did.document;
+package com.apicatalog.did.primitive;
 
 import java.net.URI;
 import java.util.Objects;

@@ -51,9 +51,9 @@ public record GenericService(
             }
 
             switch (entry.getKey()) {
-            case Vocab.ID_KEY -> id = MapAdapter.url(entry);
-            case Vocab.TYPE_KEY -> type = MapAdapter.stringCollection(entry);
-            case Vocab.SERVICE_ENDPOINT_KEY -> endpoints = MapAdapter.collection(entry);
+            case Vocab.KEY_ID -> id = MapAdapter.url(entry);
+            case Vocab.KEY_TYPE -> type = MapAdapter.stringCollection(entry);
+            case Vocab.KEY_SERVICE_ENDPOINT -> endpoints = MapAdapter.collection(entry);
 
             default -> throw new IllegalArgumentException(
                     "Unsupported property: " + entry.getKey());

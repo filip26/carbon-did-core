@@ -1,10 +1,12 @@
-package com.apicatalog.did.document;
+package com.apicatalog.did.primitive;
 
 import java.net.URI;
 import java.util.Collection;
 
+import com.apicatalog.did.DidService;
 
-final class ImmutableService implements DidService {
+
+public class ImmutableService implements DidService {
 
     final URI id;
 
@@ -12,7 +14,7 @@ final class ImmutableService implements DidService {
 
     final Collection<DidServiceEndpoint> endpoint;
 
-    ImmutableService(
+    public ImmutableService(
             final URI id,
             final Collection<String> type,
             final Collection<DidServiceEndpoint> endpoint) {

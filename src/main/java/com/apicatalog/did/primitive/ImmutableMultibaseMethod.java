@@ -1,27 +1,26 @@
-package com.apicatalog.did.document;
+package com.apicatalog.did.primitive;
 
 import java.util.Map;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
-import com.apicatalog.did.datatype.MultibaseEncoded;
 
-final class ImmutableJwkMethod implements DidVerificationMethod {
+final class ImmutableMultibaseMethod implements DidVerificationMethod {
 
     final DidUrl id;
     final String type;
     final Did controller;
-    final Map<String, Object> publicKeyJwk;
+    final byte[] publicKeyMultibase;
 
-    ImmutableJwkMethod(
+    ImmutableMultibaseMethod(
             final DidUrl id,
             final String type,
             final Did controller,
-            final Map<String, Object> publicKeyJwk) {
+            final byte[] publicKeyMultibase) {
         this.id = id;
         this.type = type;
         this.controller = controller;
-        this.publicKeyJwk = publicKeyJwk;
+        this.publicKeyMultibase = publicKeyMultibase;
     }
 
     @Override
@@ -40,12 +39,12 @@ final class ImmutableJwkMethod implements DidVerificationMethod {
     }
 
     @Override
-    public MultibaseEncoded publicKeyMultibase() {
-        return null;
+    public byte[] publicKeyMultibase() {
+        return publicKeyMultibase;
     }
 
     @Override
     public Map<String, Object> publicKeyJwk() {
-        return publicKeyJwk;
+        return null;
     }
 }

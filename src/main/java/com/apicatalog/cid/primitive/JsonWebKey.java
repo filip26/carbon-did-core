@@ -45,12 +45,6 @@ public record JsonWebKey(
     /** Verification method type. */
     public static final String TYPE_NAME = "JsonWebKey";
 
-    /** JSON property containing the public JWK. */
-    public static final String PUBLIC_KEY_JWK = "publicKeyJwk";
-
-    /** JSON property containing the secret/private JWK. */
-    public static final String SECRET_KEY_JWK = "secretKeyJwk";
-
     @Override
     public String type() {
         return TYPE;
@@ -86,18 +80,18 @@ public record JsonWebKey(
             }
 
             switch (entry.getKey()) {
-            case Vocab.ID_KEY -> id = MapAdapter.url(entry);
-            case Vocab.TYPE_KEY -> {
+            case Vocab.KEY_ID -> id = MapAdapter.url(entry);
+            case Vocab.KEY_TYPE -> {
                 if (!TYPE_NAME.equals(entry.getValue())) {
                     throw new IllegalArgumentException(
                             "Expected type '" + TYPE_NAME + "' but found '" + entry.getValue() + '\'');
                 }
             }
-            case Vocab.CONTROLLER_KEY -> controller = MapAdapter.url(entry);
-            case Vocab.EXPIRES_KEY -> expires = MapAdapter.instant(entry);
-            case Vocab.REVOKED_KEY -> revoked = MapAdapter.instant(entry);
-            case PUBLIC_KEY_JWK -> publicKeyJwk = MapAdapter.object(entry);
-            case SECRET_KEY_JWK -> secretKeyJwk = MapAdapter.object(entry);
+            case Vocab.KEY_CONTROLLER -> controller = MapAdapter.url(entry);
+            case Vocab.KEY_EXPIRES -> expires = MapAdapter.instant(entry);
+            case Vocab.KEY_REVOKED -> revoked = MapAdapter.instant(entry);
+            case Vocab.KEY_PUBLIC_KEY_JWK -> publicKeyJwk = MapAdapter.object(entry);
+            case Vocab.KEY_SECRET_KEY_JWK -> secretKeyJwk = MapAdapter.object(entry);
             default -> throw new IllegalArgumentException(
                     "Unsupported property: " + entry.getKey());
             }

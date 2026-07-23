@@ -1,11 +1,10 @@
-package com.apicatalog.did.document;
+package com.apicatalog.did.primitive;
 
 import java.util.Map;
 import java.util.Objects;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
-import com.apicatalog.did.datatype.MultibaseEncoded;
 
 /**
  * A <a href=
@@ -40,7 +39,7 @@ public interface DidVerificationMethod {
      *
      * @return multibase-encoded public key, or {@code null}
      */
-    MultibaseEncoded publicKeyMultibase();
+    byte[] publicKeyMultibase();
 
     /**
      * A {@code publicKeyJwk} value if present.
@@ -111,7 +110,7 @@ public interface DidVerificationMethod {
             final DidUrl id,
             final String type,
             final Did controller,
-            final MultibaseEncoded publicKeyMultibase) {
+            final byte[] publicKeyMultibase) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(type);
         Objects.requireNonNull(controller);

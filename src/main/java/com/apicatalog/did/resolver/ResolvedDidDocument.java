@@ -1,6 +1,6 @@
 package com.apicatalog.did.resolver;
 
-import com.apicatalog.did.document.DidDocument;
+import com.apicatalog.did.DidDocument;
 
 /**
  * Result of a DID resolution process.

@@ -1,7 +1,7 @@
 package com.apicatalog.did.resolver;
 
 import com.apicatalog.did.Did;
-import com.apicatalog.did.document.DidDocument;
+import com.apicatalog.did.DidDocument;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#dfn-did-resolvers">DID
