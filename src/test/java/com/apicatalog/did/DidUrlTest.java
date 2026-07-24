@@ -16,12 +16,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @DisplayName("GenericDidUrl")
 @TestMethodOrder(OrderAnnotation.class)
-class GenericDidUrlTest {
+class DidUrlTest {
 
     @DisplayName("of(String)")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
-    void ofString(String uri, String method, String specificId, String path, String query, String fragment) {
+    void parse(String uri, String method, String specificId, String path, String query, String fragment) {
         final DidUrl didUrl = DidUrl.parse(uri);
 
         assertNotNull(didUrl);
@@ -35,7 +35,7 @@ class GenericDidUrlTest {
     @DisplayName("of(URI)")
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "positiveVectors" })
-    void ofUri(String input, String method, String specificId, String path, String query, String fragment) {
+    void from(String input, String method, String specificId, String path, String query, String fragment) {
         final DidUrl didUrl = DidUrl.from(URI.create(input));
 
         assertNotNull(didUrl);

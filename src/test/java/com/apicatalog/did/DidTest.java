@@ -18,7 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @DisplayName("DID")
 @TestMethodOrder(OrderAnnotation.class)
-class GenericDidTest {
+class DidTest {
 
     @DisplayName("of(String)")
     @ParameterizedTest(name = "{0}")

@@ -5,7 +5,7 @@ package com.apicatalog.did;
  * "https://www.w3.org/TR/did-core/#verification-methods">verificationMethod</a>
  * entry within a DID Document.
  */
-public interface DidVerificationMethod {
+public interface DidVerificationMethod extends DidResource {
 
     /**
      * The unique identifier of this verification method.

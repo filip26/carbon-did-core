@@ -1,6 +1,7 @@
 package com.apicatalog.did.resolver;
 
 import com.apicatalog.did.DidDocument;
+import com.apicatalog.did.DidResource;
 
 /**
  * Result of a DID resolution process.
@@ -12,7 +13,7 @@ import com.apicatalog.did.DidDocument;
  * @see <a href="https://www.w3.org/TR/did-core/#did-resolution">DID
  *      Resolution</a>
  */
-public interface ResolvedDidDocument {
+public interface ResolvedDidDocument extends DidResource {
 
     /**
      * Returns the resolved DID Document.
@@ -29,25 +30,25 @@ public interface ResolvedDidDocument {
     default DidDocumentMetadata metadata() {
         return null;
     }
-
-    /**
-     * Creates a resolution result containing only a document.
-     *
-     * @param document the resolved DID Document
-     * @return a new {@code ResolvedDidDocument}
-     */
-    static ResolvedDidDocument of(DidDocument document) {
-        return new ImmutableResolvedDocument(document, null);
-    }
-
-    /**
-     * Creates a resolution result containing a document and metadata.
-     *
-     * @param document the resolved DID Document
-     * @param meta     associated metadata (may be {@code null})
-     * @return a new {@code ResolvedDidDocument}
-     */
-    static ResolvedDidDocument of(DidDocument document, DidDocumentMetadata meta) {
-        return new ImmutableResolvedDocument(document, meta);
-    }
+//
+//    /**
+//     * Creates a resolution result containing only a document.
+//     *
+//     * @param document the resolved DID Document
+//     * @return a new {@code ResolvedDidDocument}
+//     */
+//    static ResolvedDidDocument of(DidDocument document) {
+//        return new ImmutableResolvedDocument(document, null);
+//    }
+//
+//    /**
+//     * Creates a resolution result containing a document and metadata.
+//     *
+//     * @param document the resolved DID Document
+//     * @param meta     associated metadata (may be {@code null})
+//     * @return a new {@code ResolvedDidDocument}
+//     */
+//    static ResolvedDidDocument of(DidDocument document, DidDocumentMetadata meta) {
+//        return new ImmutableResolvedDocument(document, meta);
+//    }
 }

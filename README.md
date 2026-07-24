@@ -1,6 +1,6 @@
 # Carbon Decentralized Identifiers
 
-[Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/) and [DID Resolution](https://w3c.github.io/did-resolution/) support identity systems where identifiers are controlled by their owners rather than by centralized authorities.
+[Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/) support identity systems where identifiers are controlled by their owners rather than by centralized authorities.
 
 DIDs allow entities to create persistent, globally resolvable identifiers and prove control over them using cryptographic keys. This enables portable and verifiable identity without depending on a single identity provider, registry, or intermediary.
 
@@ -16,8 +16,9 @@ Carbon provides primitives for creating, resolving, and verifying DID documents 
 ## ✨ Features
 
 * DID, DID URL, and DID Document primitives
-* DID Resolver
+* Method Resolvers
   * [`did:key`](https://github.com/filip26/carbon-did-key) method
+  * [`did:cel`](https://github.com/filip26/iron-did-cel) method
 
 ## Installation
 

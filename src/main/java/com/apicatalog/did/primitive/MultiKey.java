@@ -60,18 +60,18 @@ public record MultiKey(
             }
 
             switch (entry.getKey()) {
-            case Vocab.KEY_ID -> id = MapAdapter.didUrl(entry);
+            case Vocab.KEY_ID -> id = MapEntryAdapter.didUrl(entry);
             case Vocab.KEY_TYPE -> {
                 if (!TYPE_NAME.equals(entry.getValue())) {
                     throw new IllegalArgumentException(
                             "Expected type '" + TYPE_NAME + "' but found '" + entry.getValue() + '\'');
                 }
             }
-            case Vocab.KEY_CONTROLLER -> controller = MapAdapter.did(entry);
-            case Vocab.KEY_EXPIRES -> expires = MapAdapter.instant(entry);
-            case Vocab.KEY_REVOKED -> revoked = MapAdapter.instant(entry);
-            case Vocab.KEY_PUBLIC_KEY_MULTIBASE -> publicKey = multibaseDecoder.apply(MapAdapter.string(entry));
-            case Vocab.KEY_SECRET_KEY_MULTIBASE -> secretKey = multibaseDecoder.apply(MapAdapter.string(entry));
+            case Vocab.KEY_CONTROLLER -> controller = MapEntryAdapter.did(entry);
+            case Vocab.KEY_EXPIRES -> expires = MapEntryAdapter.instant(entry);
+            case Vocab.KEY_REVOKED -> revoked = MapEntryAdapter.instant(entry);
+            case Vocab.KEY_PUBLIC_KEY_MULTIBASE -> publicKey = multibaseDecoder.apply(MapEntryAdapter.string(entry));
+            case Vocab.KEY_SECRET_KEY_MULTIBASE -> secretKey = multibaseDecoder.apply(MapEntryAdapter.string(entry));
 
             default -> throw new IllegalArgumentException(
                     "Unsupported property: " + entry.getKey());

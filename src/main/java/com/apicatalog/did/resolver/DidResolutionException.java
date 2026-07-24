@@ -14,22 +14,23 @@ public class DidResolutionException extends Exception {
     /**
      * Standard resolution error codes.
      */
-    public enum Code {
+    public enum ErrorCode {
         /** The DID syntax is invalid and cannot be parsed. */
-        InvalidDid,
+        INVALID_DID,
 
         /** The DID method resolution is not supported. */
-        UnsupportedMethod,
+        UNSUPPORTED_METHOD,
 
         /** The DID could not be found. */
-        NotFound,
+        NOT_FOUND,
 
         /** An internal error occurred. */
-        Internal,
+        INTERNAL,
+
     }
 
     protected final String did;
-    protected final Code code;
+    protected final ErrorCode code;
 
     /**
      * Creates a new resolution exception with a DID and code.
@@ -37,7 +38,7 @@ public class DidResolutionException extends Exception {
      * @param did  the DID being resolved (may be {@code null})
      * @param code error code
      */
-    public DidResolutionException(String did, Code code) {
+    public DidResolutionException(String did, ErrorCode code) {
         this.did = did;
         this.code = code;
     }
@@ -49,7 +50,7 @@ public class DidResolutionException extends Exception {
      * @param code    error code
      * @param message detail message
      */
-    public DidResolutionException(String did, Code code, String message) {
+    public DidResolutionException(String did, ErrorCode code, String message) {
         super(message);
         this.did = did;
         this.code = code;
@@ -58,7 +59,7 @@ public class DidResolutionException extends Exception {
     /**
      * Creates a new resolution exception with a cause.
      * <p>
-     * Code is set to {@link Code#Internal}.
+     * Code is set to {@link ErrorCode#INTERNAL}.
      * </p>
      *
      * @param did the DID being resolved (may be {@code null})
@@ -67,13 +68,13 @@ public class DidResolutionException extends Exception {
     public DidResolutionException(String did, Throwable e) {
         super(e);
         this.did = did;
-        this.code = Code.Internal;
+        this.code = ErrorCode.INTERNAL;
     }
 
     /**
      * Creates a new resolution exception with a message and cause.
      * <p>
-     * Code is set to {@link Code#Internal}.
+     * Code is set to {@link ErrorCode#INTERNAL}.
      * </p>
      *
      * @param did     the DID being resolved (may be {@code null})
@@ -83,13 +84,13 @@ public class DidResolutionException extends Exception {
     public DidResolutionException(String did, String message, Throwable e) {
         super(message, e);
         this.did = did;
-        this.code = Code.Internal;
+        this.code = ErrorCode.INTERNAL;
     }
 
     /**
      * Creates a new resolution exception.
      * <p>
-     * Code is set to {@link Code#Internal}.
+     * Code is set to {@link ErrorCode#INTERNAL}.
      * </p>
      *
      * @param did     the DID being resolved (may be {@code null})
@@ -97,7 +98,7 @@ public class DidResolutionException extends Exception {
      * @param message detail message
      * @param e       the cause
      */
-    public DidResolutionException(String did, Code code, String message, Throwable e) {
+    public DidResolutionException(String did, ErrorCode code, String message, Throwable e) {
         super(message, e);
         this.did = did;
         this.code = code;
@@ -117,7 +118,7 @@ public class DidResolutionException extends Exception {
      *
      * @return error code
      */
-    public Code getCode() {
+    public ErrorCode getCode() {
         return code;
     }
 }

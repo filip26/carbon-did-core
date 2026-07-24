@@ -2,6 +2,7 @@ package com.apicatalog.did;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#did-document-properties">DID
@@ -11,7 +12,7 @@ import java.util.Collections;
  * Core specification. All accessors return empty sets by default.
  * </p>
  */
-public interface DidDocument {
+public interface DidDocument extends DidResource {
 
     public enum Relationship {
         VERIFICATION, // generic
@@ -61,7 +62,9 @@ public interface DidDocument {
 
     Collection<DidVerificationMethod> methods(Relationship relationship);
 
-    Collection<DidUrl> remoteMethods(Relationship relationship);
+    default Collection<DidUrl> remoteMethods(Relationship relationship) {
+        return List.of();
+    }
 
     /**
      * Checks whether this document has the required {@code id} property.

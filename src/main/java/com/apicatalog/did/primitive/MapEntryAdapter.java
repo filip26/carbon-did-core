@@ -10,7 +10,7 @@ import java.util.Map;
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
 
-class MapAdapter {
+class MapEntryAdapter {
 
     public static String string(Map.Entry<String, Object> entry) {
         if (entry.getValue() instanceof String value) {
@@ -52,6 +52,15 @@ class MapAdapter {
     public static String url(Map.Entry<String, Object> entry) {
         var value = string(entry);
 
+//        try {
+//            return new URI(value);
+//        } catch (URISyntaxException e) {
+//            throw new IllegalArgumentException(
+//                    "Property '" + entry.getKey()
+//                            + "' must be a valid URL.",
+//                    e);
+//        }
+
         // just a simple validation
         if (!startsWithScheme(value)) {
             throw new IllegalArgumentException(
@@ -59,30 +68,6 @@ class MapAdapter {
         }
 
         return value;
-    }
-
-    private static final boolean startsWithScheme(final String uri) {
-
-        if (uri == null
-                || uri.length() < 2 // a scheme must have at least one letter followed by ':'
-                || !Character.isLetter(uri.codePointAt(0)) // a scheme name must start with a letter
-        ) {
-            return false;
-        }
-
-        for (int i = 1; i < uri.length(); i++) {
-
-            if (
-            // a scheme name must start with a letter followed by a letter/digit/+/-/.
-            Character.isLetterOrDigit(uri.codePointAt(i))
-                    || uri.charAt(i) == '-' || uri.charAt(i) == '+' || uri.charAt(i) == '.') {
-                continue;
-            }
-
-            // a scheme name must be terminated by ':'
-            return uri.charAt(i) == ':';
-        }
-        return false;
     }
 
     public static Collection<String> stringCollection(Map.Entry<String, Object> entry) {
@@ -119,4 +104,29 @@ class MapAdapter {
 
         return List.of(entry.getValue());
     }
+
+    private static final boolean startsWithScheme(final String uri) {
+
+        if (uri == null
+                || uri.length() < 2 // a scheme must have at least one letter followed by ':'
+                || !Character.isLetter(uri.codePointAt(0)) // a scheme name must start with a letter
+        ) {
+            return false;
+        }
+
+        for (int i = 1; i < uri.length(); i++) {
+
+            if (
+            // a scheme name must start with a letter followed by a letter/digit/+/-/.
+            Character.isLetterOrDigit(uri.codePointAt(i))
+                    || uri.charAt(i) == '-' || uri.charAt(i) == '+' || uri.charAt(i) == '.') {
+                continue;
+            }
+
+            // a scheme name must be terminated by ':'
+            return uri.charAt(i) == ':';
+        }
+        return false;
+    }
+
 }

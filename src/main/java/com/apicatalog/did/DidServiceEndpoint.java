@@ -7,7 +7,7 @@ import java.util.Objects;
  * A <a href="https://www.w3.org/TR/did-core/#services">serviceEndpoint</a>
  * entry within a DID Document service.
  */
-public interface DidServiceEndpoint {
+public interface DidServiceEndpoint extends DidResource {
 
     /**
      * The {@code id} of this service endpoint.
