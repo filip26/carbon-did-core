@@ -14,7 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@DisplayName("GenericDidUrl")
+@DisplayName("DidUrl")
 @TestMethodOrder(OrderAnnotation.class)
 class DidUrlTest {
 
@@ -28,7 +28,7 @@ class DidUrlTest {
         assertEquals(method, didUrl.method());
         assertEquals(specificId, didUrl.methodSpecificId());
         assertEquals(path, didUrl.path());
-        assertEquals(query, didUrl.query());
+        assertEquals(query, didUrl.queryToString());
         assertEquals(fragment, didUrl.fragment());
     }
 
@@ -42,7 +42,7 @@ class DidUrlTest {
         assertEquals(method, didUrl.method());
         assertEquals(specificId, didUrl.methodSpecificId());
         assertEquals(path, didUrl.path());
-        assertEquals(query, didUrl.query());
+        assertEquals(query, didUrl.queryToString());
         assertEquals(fragment, didUrl.fragment());
     }
 
@@ -223,6 +223,14 @@ class DidUrlTest {
                         "web",
                         "example.com",
                         "/path%2Fto%2Ffile%3Fv%3D1", null, "fragment1"),
+
+                Arguments.of(
+                        "did:web:example.com?relativeRef=%2Fresume.pdf%3Fversion%3D2#key-1",
+                        "web",
+                        "example.com",
+                        null,
+                        "relativeRef=%2Fresume.pdf%3Fversion%3D2",
+                        "key-1"),
 
                 // Valid DID URL with port encoded in the method
                 Arguments.of(

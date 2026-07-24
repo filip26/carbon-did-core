@@ -1,6 +1,9 @@
 package com.apicatalog.did;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,8 +33,7 @@ import java.util.Objects;
  *                         pct-encoded octets).
  * @param path             the path (percent-encoded if applicable). When
  *                         present it starts with {@code '/'}.
- * @param query            the query parameters (percent-encoded if applicable),
- *                         without a leading {@code '?'}.
+ * @param query            the query parameters (percent-encoded if applicable).
  * @param fragment         the fragment (percent-encoded if applicable), without
  *                         a leading {@code '#'}.
  */
@@ -39,7 +41,7 @@ public record DidUrl(
         String method,
         String methodSpecificId,
         String path,
-        String query,
+        Collection<QueryParameter> query,
         String fragment) {
 
     /**
@@ -62,7 +64,6 @@ public record DidUrl(
         Objects.requireNonNull(methodSpecificId, "Method-specific-id must not be null.");
 
         path = normalizePath(path);
-        query = normalizeQuery(query);
         fragment = normalizeFragment(fragment);
     }
 
@@ -78,7 +79,7 @@ public record DidUrl(
      */
     public static DidUrl of(final Did did, final String fragment) {
         Objects.requireNonNull(fragment);
-        return of(did, null, null, fragment);
+        return of(did, null, (Collection<QueryParameter>) null, fragment);
     }
 
     /**
@@ -86,19 +87,36 @@ public record DidUrl(
      * fragment. Percent-encoding is preserved.
      *
      * @param did      base DID (must not be {@code null})
-     * @param path     optional path (see {@link #normalizePath(String)})
-     * @param query    optional query (see {@link #normalizeQuery(String)})
-     * @param fragment optional fragment (see {@link #normalizeFragment(String)})
+     * @param path     optional path
+     * @param query    optional query
+     * @param fragment optional fragment
      * @return a new {@code DidUrl}
      * @throws NullPointerException if {@code did} is {@code null}
      */
     public static DidUrl of(final Did did, final String path, final String query, final String fragment) {
         Objects.requireNonNull(did);
+        return of(did, path, parseQueryParameters(query), fragment);
+    }
+
+    /**
+     * Creates a DID URL from a base {@link Did} and optional path, query, and
+     * fragment. Percent-encoding is preserved.
+     *
+     * @param did      base DID (must not be {@code null})
+     * @param path     optional path
+     * @param query    optional query
+     * @param fragment optional fragment
+     * @return a new {@code DidUrl}
+     * @throws NullPointerException if {@code did} is {@code null}
+     */
+    public static DidUrl of(final Did did, final String path, final Collection<QueryParameter> query,
+            final String fragment) {
+        Objects.requireNonNull(did);
         return new DidUrl(
                 did.method(),
                 did.methodSpecificId(),
                 normalizePath(path),
-                normalizeQuery(query),
+                query,
                 normalizeFragment(fragment));
     }
 
@@ -274,7 +292,11 @@ public record DidUrl(
                 .append(method).append(':')
                 .append(methodSpecificId);
 
-        appendPathAndQuery(builder);
+        appendPath(builder);
+        if (query != null) {
+            builder.append('?');
+            appendQueryParams(builder);
+        }
 
         if (fragment != null) {
             builder.append('#');
@@ -286,27 +308,52 @@ public record DidUrl(
         return builder.toString();
     }
 
+    public String queryToString() {
+        return query != null
+                ? appendQueryParams(new StringBuilder()).toString()
+                : null;
+    }
+
     /**
-     * Appends the path and query to the provided builder. Path is ensured to start
-     * with {@code '/'} when present; query is appended after {@code '?'} even if
-     * empty.
+     * Appends the path to the provided builder. Path is ensured to start with
+     * {@code '/'} when present.
      *
      * @param builder target builder
      * @return the same {@code builder}
      */
-    private StringBuilder appendPathAndQuery(final StringBuilder builder) {
+    private StringBuilder appendPath(final StringBuilder builder) {
         if (path != null) {
             if (path.isEmpty() || path.charAt(0) != '/') {
                 builder.append('/');
-            } else if (!path.isEmpty()) {
+            } else {
                 builder.append(path);
             }
         }
+        return builder;
+    }
 
-        if (query != null) {
-            builder.append('?');
-            if (!query.isEmpty()) {
-                builder.append(query);
+    /**
+     * Appends the query to the provided builder. Query is appended after
+     * {@code '?'} even if empty.
+     *
+     * @param builder target builder
+     * @return the same {@code builder}
+     */
+    private StringBuilder appendQueryParams(final StringBuilder builder) {
+        boolean next = false;
+        for (var entry : query) {
+            if (next) {
+                builder.append('&');
+
+            } else {
+                next = true;
+            }
+
+            builder.append(entry.key);
+
+            if (entry.value != null) {
+                builder.append('=');
+                builder.append(entry.value);
             }
         }
         return builder;
@@ -327,19 +374,6 @@ public record DidUrl(
             return ""; // will render as "/"
         }
         return p.charAt(0) == '/' ? p : "/" + p;
-    }
-
-    /**
-     * Removes a leading {@code '?'} from a query if present.
-     *
-     * @param q input query (may be {@code null})
-     * @return query without leading {@code '?'}, or {@code null}
-     */
-    private static final String normalizeQuery(final String q) {
-        if (q == null) {
-            return null;
-        }
-        return (q.startsWith("?")) ? q.substring(1) : q;
     }
 
     /**
@@ -406,11 +440,11 @@ public record DidUrl(
 
         Did.validate(methodName, methodSpecificId);
 
-        final String rest = ssp.substring(msiEndIndex); // starts with '/' or '?' or is empty
-
         // Extract path and query from tail (both raw, without leading markers)
         String path = null;
         String query = null;
+
+        final String rest = ssp.substring(msiEndIndex); // starts with '/' or '?' or is empty
 
         if (!rest.isEmpty()) {
             if (rest.charAt(0) == '/') {
@@ -420,10 +454,12 @@ public record DidUrl(
                     path = rest; // includes leading '/'
                 } else {
                     path = rest.substring(0, queryIndex); // includes leading '/'
-                    query = rest.substring(queryIndex + 1); // without '?'
+                    query = rest.substring(queryIndex);
                 }
+
             } else if (rest.charAt(0) == '?') {
-                query = rest.substring(1); // empty query allowed
+                query = rest; // empty query allowed
+
             } else {
                 // Should not happen (we only cut at '/' or '?')
                 throw new IllegalArgumentException(
@@ -435,8 +471,55 @@ public record DidUrl(
                 methodName,
                 methodSpecificId,
                 path,
-                query,
+                query != null ? parseQueryParameters(query) : null,
                 fragment);
+    }
+
+    private static Collection<QueryParameter> parseQueryParameters(String queryString) {
+        if (queryString == null) {
+            return null;
+        }
+
+        if (queryString.isEmpty()) {
+            return List.of();
+        }
+
+        int length = queryString.length();
+        var queries = new ArrayList<QueryParameter>();
+
+        var startIndex = queryString.charAt(0) == '?' ? 1 : 0;
+        int keyIndex = startIndex;
+        int valueIndex = -1;
+
+        for (int i = startIndex; i <= length; i++) {
+            char c = i == length ? '&' : queryString.charAt(i);
+
+            if (c == '=' && valueIndex == -1) {
+                valueIndex = i + 1;
+
+            } else if (c == '&') {
+
+                if (i > keyIndex) {
+                    if (valueIndex == -1) {
+                        queries.add(new QueryParameter(queryString.substring(keyIndex, i), null));
+
+                    } else {
+                        queries.add(
+                                new QueryParameter(
+                                        queryString.substring(keyIndex, valueIndex - 1),
+                                        queryString.substring(valueIndex, i)));
+                    }
+
+                } else if (i == keyIndex) {
+                    queries.add(new QueryParameter("", null));
+                }
+
+                keyIndex = i + 1;
+                valueIndex = -1;
+            }
+        }
+
+        return List.copyOf(queries);
     }
 
     /**
@@ -454,4 +537,11 @@ public record DidUrl(
     private static final boolean isNullOrBlank(String value) {
         return value == null || value.isBlank();
     }
+
+    public static record QueryParameter(String key, String value) {
+        @Override
+        public final String toString() {
+            return key + "=" + value;
+        }
+    };
 }
