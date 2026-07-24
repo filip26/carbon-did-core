@@ -539,9 +539,16 @@ public record DidUrl(
     }
 
     public static record QueryParameter(String key, String value) {
+
+        public QueryParameter {
+            Objects.requireNonNull(key);
+        }
+
         @Override
         public final String toString() {
-            return key + "=" + value;
+            return value == null
+                    ? key
+                    : key + "=" + value;
         }
     };
 }
