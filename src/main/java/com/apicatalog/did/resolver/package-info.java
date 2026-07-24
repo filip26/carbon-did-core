@@ -8,7 +8,7 @@
  * </p>
  *
  * <ul>
- * <li>{@link com.apicatalog.did.resolver.DidResolver} — DID resolution API</li>
+ * <li>{@link com.apicatalog.did.resolver.LegacyDidResolver} — DID resolution API</li>
  * <li>{@link com.apicatalog.did.resolver.ResolvedDidDocument} — resolution
  * result</li>
  * <li>{@link com.apicatalog.did.resolver.DidResolutionException} — resolution

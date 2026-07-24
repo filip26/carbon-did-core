@@ -37,25 +37,4 @@ public interface DidVerificationMethod extends DidResource {
     default boolean hasRequiredProperties() {
         return id() != null && type() != null && controller() != null;
     }
-
-//    /**
-//     * Compares two verification methods for equality of {@code id}, {@code type},
-//     * {@code controller}, {@code publicKeyMultibase}, and {@code publicKeyJwk}.
-//     *
-//     * @param method1 first method (may be {@code null})
-//     * @param method2 second method (may be {@code null})
-//     * @return {@code true} if both are equal
-//     */
-//    static boolean equals(final DidVerificationMethod method1, final DidVerificationMethod method2) {
-//        if (method1 == null || method2 == null) {
-//            return method1 == method2;
-//        }
-//        return Objects.equals(method1.id(), method2.id())
-//                && Objects.equals(method1.type(), method2.type())
-//                && Objects.equals(method1.controller(), method2.controller())
-    //// && Objects.equals(method1.publicKeyMultibase(),
-    /// method2.publicKeyMultibase()) / && Objects.equals(method1.publicKeyJwk(),
-    /// method2.publicKeyJwk()) /
-//                ;
-//    }
 }

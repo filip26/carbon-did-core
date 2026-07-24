@@ -36,7 +36,7 @@ public interface DidDocument extends DidResource {
      * @return controller set, possibly empty
      */
     default Collection<Did> controller() {
-        return Collections.emptySet();
+        return List.of();
     }
 
     /**
@@ -46,7 +46,7 @@ public interface DidDocument extends DidResource {
      * @return URIs, possibly empty
      */
     default Collection<String> alsoKnownAs() {
-        return Collections.emptySet();
+        return List.of();
     }
 
     /**
@@ -55,7 +55,7 @@ public interface DidDocument extends DidResource {
      * @return service definitions, possibly empty
      */
     default Collection<DidService> service() {
-        return Collections.emptySet();
+        return List.of();
     }
 
     Collection<Relationship> relationships();
