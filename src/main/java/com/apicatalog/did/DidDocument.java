@@ -1,8 +1,10 @@
 package com.apicatalog.did;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#did-document-properties">DID
@@ -58,7 +60,7 @@ public interface DidDocument extends DidResource {
         return List.of();
     }
 
-    Collection<Relationship> relationships();
+    Set<Relationship> relationships();
 
     Collection<DidVerificationMethod> methods(Relationship relationship);
 
@@ -75,4 +77,103 @@ public interface DidDocument extends DidResource {
         return id() != null;
     }
 
+    /**
+     * Result of a DID resolution process.
+     * <p>
+     * Contains the resolved {@link DidDocument} and optional
+     * {@link DidDocumentMetadata}.
+     * </p>
+     *
+     * @see <a href="https://www.w3.org/TR/did-core/#did-resolution">DID
+     *      Resolution</a>
+     * 
+     * @param metadata the resolution metadata associated with the DID Document, or
+     *                 {@code null} if none
+     * @param document the DID Document (never {@code null})
+     */
+    public record WithMetadata(
+            DidDocument.Metadata metadata,
+            DidDocument document) implements DidResource {
+
+    }
+    
+    /**
+     * Metadata associated with a resolved DID Document, as defined in
+     * <a href="https://www.w3.org/TR/did-core/#did-document-metadata">DID Core —
+     * DID Document Metadata</a>.
+     */
+    public interface Metadata extends DidResource {
+
+        /**
+         * The timestamp when the DID Document was created.
+         *
+         * @return creation time, or {@code null} if not provided
+         */
+        default Instant created() {
+            return null;
+        }
+
+        /**
+         * The timestamp when the DID Document was last updated.
+         *
+         * @return last update time, or {@code null} if not provided
+         */
+        default Instant updated() {
+            return null;
+        }
+
+        /**
+         * Indicates whether the DID has been deactivated.
+         *
+         * @return {@code true} if deactivated, otherwise {@code false}
+         */
+        default boolean deactivated() {
+            return false;
+        }
+
+        /**
+         * A timestamp after which the DID Document should be refreshed.
+         *
+         * @return refresh time, or {@code null} if not specified
+         */
+        default Instant refresh() {
+            return null;
+        }
+
+        /**
+         * The identifier for the current version of the DID Document.
+         *
+         * @return version identifier, or {@code null} if not provided
+         */
+        default String versionId() {
+            return null;
+        }
+
+        /**
+         * The identifier of the next version of the DID Document.
+         *
+         * @return next version identifier, or {@code null} if not provided
+         */
+        default String nextVersionId() {
+            return null;
+        }
+
+        /**
+         * Equivalent identifiers for the DID, if any.
+         *
+         * @return a set of equivalent DIDs, never {@code null}
+         */
+        default Set<Did> equivalentId() {
+            return Collections.emptySet();
+        }
+
+        /**
+         * The canonical identifier for the DID.
+         *
+         * @return canonical DID, or {@code null} if not provided
+         */
+        default Did canonicalId() {
+            return null;
+        }
+    }
 }
