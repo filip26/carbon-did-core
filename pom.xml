@@ -53,12 +53,11 @@
     <inceptionYear>2022</inceptionYear>
 
     <properties>
+        <maven.compiler.release>25</maven.compiler.release>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <argLine>-Dfile.encoding=UTF-8</argLine>
-
-        <maven.compiler.target>25</maven.compiler.target>
-        <maven.compiler.source>25</maven.compiler.source>
 
         <!-- test resources -->
         <junit.version>6.1.0</junit.version>

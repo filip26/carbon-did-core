@@ -6,13 +6,5 @@
  * <a href="https://www.w3.org/TR/did-core/#did-resolution">DID Resolution</a>
  * specification.
  * </p>
- *
- * <ul>
- * <li>{@link com.apicatalog.did.resolver.LegacyDidResolver} — DID resolution API</li>
- * <li>{@link com.apicatalog.did.resolver.ResolvedDidDocument} — resolution
- * result</li>
- * <li>{@link com.apicatalog.did.resolver.DidResolutionException} — resolution
- * errors</li>
- * </ul>
  */
 package com.apicatalog.did.resolver;

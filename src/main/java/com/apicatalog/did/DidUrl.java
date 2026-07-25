@@ -57,7 +57,6 @@ public record DidUrl(
      *                         present; {@code null} unchanged)
      * @param fragment         optional fragment (leading {@code '#'} removed if
      *                         present; {@code null} unchanged)
-     * @return a new {@code DidUrl}
      */
     public DidUrl {
         Objects.requireNonNull(method, "Method must not be null.");

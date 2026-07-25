@@ -81,7 +81,7 @@ public interface DidDocument extends DidResource {
      * Result of a DID resolution process.
      * <p>
      * Contains the resolved {@link DidDocument} and optional
-     * {@link DidDocumentMetadata}.
+     * {@link DidDocument.Metadata}.
      * </p>
      *
      * @see <a href="https://www.w3.org/TR/did-core/#did-resolution">DID

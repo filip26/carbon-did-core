@@ -16,25 +16,26 @@ import com.apicatalog.did.DidService;
  * endpoint model. Endpoint values may be strings and maps.
  * </p>
  * 
- * @param id        the service identifier
+ * @param id        the service identifier (optional)
  * @param type      a collection of types defining the service
  * @param endpoints a collection of service endpoints; this collection can
+ *                  contain strings and maps
  */
 public record GenericService(
         String id,
         Collection<String> type,
-        Collection<Object> endpoint) implements DidService {
+        Collection<Object> endpoints) implements DidService {
 
     /**
-     * Creates a {@code DidService} with a single type and a single endpoint.
+     * Creates a {@code DidService}.
      *
-     * @param id       service id
-     * @param type     service type
-     * @param endpoint service endpoint
+     * @param id        service id
+     * @param type      service type
+     * @param endpoints service endpoints
      */
     public GenericService {
         type = Objects.requireNonNull(type);
-        endpoint = Objects.requireNonNull(endpoint);
+        endpoints = Objects.requireNonNull(endpoints);
     }
 
     /**
@@ -95,6 +96,6 @@ public record GenericService(
 
     @Override
     public boolean hasEndpoint() {
-        return endpoint != null && !endpoint.isEmpty();
+        return endpoints != null && !endpoints.isEmpty();
     }
 }
