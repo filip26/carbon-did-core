@@ -1,11 +1,26 @@
 package com.apicatalog.did;
 
+import java.util.Collection;
+import java.util.Map;
+
+import com.apicatalog.did.Document.Relationship;
+
 /**
  * A <a href=
  * "https://www.w3.org/TR/did-core/#verification-methods">verificationMethod</a>
  * entry within a DID Document.
  */
-public interface DidVerificationMethod extends DidResource {
+public interface VerificationMethod {
+
+    @FunctionalInterface
+    public interface Resolver {
+        Collection<VerificationMethod> resolve(DidUrl url, Relationship rel, Map<String, Object> options);
+    }
+
+    @FunctionalInterface
+    public interface Dereferencer {
+        Collection<VerificationMethod> dereference(DidUrl url, Document document, Relationship rel);
+    }
 
     /**
      * The unique identifier of this verification method.

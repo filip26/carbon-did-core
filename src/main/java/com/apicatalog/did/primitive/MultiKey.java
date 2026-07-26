@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
-import com.apicatalog.did.DidVerificationMethod;
+import com.apicatalog.did.VerificationMethod;
 
 /**
  * 
@@ -24,7 +24,7 @@ public record MultiKey(
         Instant expires,
         Instant revoked,
         byte[] publicKey,
-        byte[] secretKey) implements DidVerificationMethod {
+        byte[] secretKey) implements VerificationMethod {
 
     public static final String TYPE = "https://w3id.org/security#Multikey";
     public static final String TYPE_NAME = "Multikey";

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.apicatalog.did.DidService;
+import com.apicatalog.did.Service;
 
 /**
  * Represents a generic <a href="https://www.w3.org/TR/cid-1.0/#services">CID
@@ -24,7 +24,7 @@ import com.apicatalog.did.DidService;
 public record GenericService(
         String id,
         Collection<String> type,
-        Collection<Object> endpoints) implements DidService {
+        Collection<Object> endpoints) implements Service {
 
     /**
      * Creates a {@code DidService}.

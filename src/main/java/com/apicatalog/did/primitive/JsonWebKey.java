@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
-import com.apicatalog.did.DidVerificationMethod;
+import com.apicatalog.did.VerificationMethod;
 
 /**
  * Represents a JSON Web Key (JWK) verification method in accordance with the
@@ -35,7 +35,7 @@ public record JsonWebKey(
         Instant expires,
         Instant revoked,
         Map<String, Object> publicKeyJwk,
-        Map<String, Object> secretKeyJwk) implements DidVerificationMethod {
+        Map<String, Object> secretKeyJwk) implements VerificationMethod {
 
     /** Verification method type. */
     public static final String TYPE = "https://w3id.org/security#JsonWebKey";

@@ -3,7 +3,9 @@ package com.apicatalog.did;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,15 +16,63 @@ import java.util.Set;
  * Core specification. All accessors return empty sets by default.
  * </p>
  */
-public interface DidDocument extends DidResource {
+public interface Document {
+
+    @FunctionalInterface
+    public interface Resolver {
+        Document.WithMetadata resolve(DidUrl url, Map<String, Object> options);
+    }
 
     public enum Relationship {
-        VERIFICATION, // generic
-        AUTHENTICATION,
-        ASSERTION,
-        KEY_AGREEMENT,
-        CAPABILITY_INVOCATION,
-        CAPABILITY_DELETATION
+        VERIFICATION("verificationMethod"),
+        AUTHENTICATION("authentication"),
+        ASSERTION("assertionMethod"),
+        KEY_AGREEMENT("keyAgreement"),
+        CAPABILITY_INVOCATION("capabilityInvocation"),
+        CAPABILITY_DELEGATION("capabilityDelegation");
+
+        public static final String VOCAB = "https://w3id.org/security#";
+
+        private final String name;
+        private final String uri;
+
+        private static final Map<String, Relationship> LOOKUP;
+
+        static {
+            Map<String, Relationship> map = HashMap.newHashMap(Relationship.values().length);
+            for (Relationship rel : values()) {
+                map.put(rel.name, rel);
+                map.put(rel.uri, rel);
+            }
+            LOOKUP = Map.copyOf(map);
+        }
+
+        Relationship(String name) {
+            this.name = name;
+            this.uri = VOCAB + (name.endsWith("Method") ? name : name + "Method");
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public static Relationship from(String name) {
+            if (name == null || name.isBlank()) {
+                throw new IllegalArgumentException("Proof purpose cannot be null or blank");
+            }
+
+            Relationship rel = LOOKUP.get(name);
+
+            if (rel == null) {
+                throw new IllegalArgumentException("Unknown relationship: " + name);
+            }
+
+            return rel;
+        }
     }
 
     /**
@@ -56,13 +106,13 @@ public interface DidDocument extends DidResource {
      *
      * @return service definitions, possibly empty
      */
-    default Collection<DidService> service() {
+    default Collection<Service> service() {
         return List.of();
     }
 
     Set<Relationship> relationships();
 
-    Collection<DidVerificationMethod> methods(Relationship relationship);
+    Collection<VerificationMethod> methods(Relationship relationship);
 
     default Collection<DidUrl> remoteMethods(Relationship relationship) {
         return List.of();
@@ -80,8 +130,8 @@ public interface DidDocument extends DidResource {
     /**
      * Result of a DID resolution process.
      * <p>
-     * Contains the resolved {@link DidDocument} and optional
-     * {@link DidDocument.Metadata}.
+     * Contains the resolved {@link Document} and optional
+     * {@link Document.Metadata}.
      * </p>
      *
      * @see <a href="https://www.w3.org/TR/did-core/#did-resolution">DID
@@ -92,17 +142,17 @@ public interface DidDocument extends DidResource {
      * @param document the DID Document (never {@code null})
      */
     public record WithMetadata(
-            DidDocument.Metadata metadata,
-            DidDocument document) implements DidResource {
+            Document.Metadata metadata,
+            Document document) {
 
     }
-    
+
     /**
      * Metadata associated with a resolved DID Document, as defined in
      * <a href="https://www.w3.org/TR/did-core/#did-document-metadata">DID Core —
      * DID Document Metadata</a>.
      */
-    public interface Metadata extends DidResource {
+    public interface Metadata {
 
         /**
          * The timestamp when the DID Document was created.

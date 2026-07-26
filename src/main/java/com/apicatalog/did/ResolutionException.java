@@ -1,4 +1,4 @@
-package com.apicatalog.did.resolver;
+package com.apicatalog.did;
 
 /**
  * Exception thrown during DID resolution.
@@ -7,9 +7,9 @@ package com.apicatalog.did.resolver;
  * representation, or internal errors.
  * </p>
  */
-public class DidResolutionException extends Exception {
+public class ResolutionException extends RuntimeException {
 
-    private static final long serialVersionUID = -7104603698482015381L;
+    private static final long serialVersionUID = 893194360411977589L;
 
     /**
      * Standard resolution error codes.
@@ -38,7 +38,7 @@ public class DidResolutionException extends Exception {
      * @param did  the DID being resolved (may be {@code null})
      * @param code error code
      */
-    public DidResolutionException(String did, ErrorCode code) {
+    public ResolutionException(String did, ErrorCode code) {
         this.did = did;
         this.code = code;
     }
@@ -50,7 +50,7 @@ public class DidResolutionException extends Exception {
      * @param code    error code
      * @param message detail message
      */
-    public DidResolutionException(String did, ErrorCode code, String message) {
+    public ResolutionException(String did, ErrorCode code, String message) {
         super(message);
         this.did = did;
         this.code = code;
@@ -65,7 +65,7 @@ public class DidResolutionException extends Exception {
      * @param did the DID being resolved (may be {@code null})
      * @param e   the cause
      */
-    public DidResolutionException(String did, Throwable e) {
+    public ResolutionException(String did, Throwable e) {
         super(e);
         this.did = did;
         this.code = ErrorCode.INTERNAL;
@@ -81,7 +81,7 @@ public class DidResolutionException extends Exception {
      * @param message detail message
      * @param e       the cause
      */
-    public DidResolutionException(String did, String message, Throwable e) {
+    public ResolutionException(String did, String message, Throwable e) {
         super(message, e);
         this.did = did;
         this.code = ErrorCode.INTERNAL;
@@ -98,7 +98,7 @@ public class DidResolutionException extends Exception {
      * @param message detail message
      * @param e       the cause
      */
-    public DidResolutionException(String did, ErrorCode code, String message, Throwable e) {
+    public ResolutionException(String did, ErrorCode code, String message, Throwable e) {
         super(message, e);
         this.did = did;
         this.code = code;
