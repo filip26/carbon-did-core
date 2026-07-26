@@ -1,9 +1,9 @@
 package com.apicatalog.did;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
-import com.apicatalog.did.Document.Relationship;
+import com.apicatalog.did.DidDocument.Relationship;
 
 /**
  * A <a href=
@@ -14,12 +14,12 @@ public interface VerificationMethod {
 
     @FunctionalInterface
     public interface Resolver {
-        Collection<VerificationMethod> resolve(DidUrl url, Relationship rel, Map<String, Object> options);
+        Optional<VerificationMethod> resolveMethod(DidUrl url, Relationship rel, Map<String, Object> options);
     }
 
     @FunctionalInterface
     public interface Dereferencer {
-        Collection<VerificationMethod> dereference(DidUrl url, Document document, Relationship rel);
+        Optional<VerificationMethod> findMethod(DidDocument document, DidUrl url, Relationship rel);
     }
 
     /**

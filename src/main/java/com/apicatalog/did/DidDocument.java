@@ -16,11 +16,11 @@ import java.util.Set;
  * Core specification. All accessors return empty sets by default.
  * </p>
  */
-public interface Document {
+public interface DidDocument {
 
     @FunctionalInterface
     public interface Resolver {
-        Document.WithMetadata resolve(DidUrl url, Map<String, Object> options);
+        DidDocument.WithMetadata resolve(DidUrl url, Map<String, Object> options);
     }
 
     public enum Relationship {
@@ -130,8 +130,8 @@ public interface Document {
     /**
      * Result of a DID resolution process.
      * <p>
-     * Contains the resolved {@link Document} and optional
-     * {@link Document.Metadata}.
+     * Contains the resolved {@link DidDocument} and optional
+     * {@link DidDocument.Metadata}.
      * </p>
      *
      * @see <a href="https://www.w3.org/TR/did-core/#did-resolution">DID
@@ -142,8 +142,8 @@ public interface Document {
      * @param document the DID Document (never {@code null})
      */
     public record WithMetadata(
-            Document.Metadata metadata,
-            Document document) {
+            DidDocument.Metadata metadata,
+            DidDocument document) {
 
     }
 

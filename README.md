@@ -15,10 +15,13 @@ Carbon provides primitives for creating, resolving, and verifying DID documents 
 
 ## ✨ Features
 
-* DID, DID URL, and DID Document primitives
-* Method Resolvers
-  * [`did:key`](https://github.com/filip26/carbon-did-key) method
-  * [`did:cel`](https://github.com/filip26/iron-did-cel) method
+- DID, DID URL, and DID Document primitives
+- Resolvers
+  - [`did:key`](https://github.com/filip26/carbon-did-key) method
+  - [`did:cel`](https://github.com/filip26/iron-did-cel) method
+- Modular, fully configurable, and extensible
+- Zero dependencies for a lightweight, self-contained implementation
+- Deliberate engineering; zero vibe coding
 
 ## Installation
 

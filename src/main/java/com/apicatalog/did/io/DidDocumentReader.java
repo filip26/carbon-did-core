@@ -3,10 +3,10 @@ package com.apicatalog.did.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.apicatalog.did.Document;
+import com.apicatalog.did.DidDocument;
 
 /**
- * Reader for parsing a {@link Document} from an {@link InputStream}.
+ * Reader for parsing a {@link DidDocument} from an {@link InputStream}.
  * <p>
  * Implementations handle a specific DID document representation (e.g. JSON-LD,
  * CBOR).
@@ -28,5 +28,5 @@ public interface DidDocumentReader {
      * @return parsed {@code DidDocument}
      * @throws IOException if a low-level I/O error occurs
      */
-    Document read(InputStream is) throws IOException;
+    DidDocument read(InputStream is) throws IOException;
 }

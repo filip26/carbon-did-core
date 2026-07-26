@@ -3,10 +3,10 @@ package com.apicatalog.did.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.apicatalog.did.Document;
+import com.apicatalog.did.DidDocument;
 
 /**
- * Writer for serializing a {@link Document} to an {@link OutputStream}.
+ * Writer for serializing a {@link DidDocument} to an {@link OutputStream}.
  * <p>
  * Implementations produce a specific DID document representation (e.g. JSON-LD,
  * CBOR).
@@ -28,5 +28,5 @@ public interface DidDocumentWriter {
      * @param os       the output stream to write to (must not be {@code null})
      * @throws IOException if a low-level I/O error occurs
      */
-    void write(Document document, OutputStream os) throws IOException;
+    void write(DidDocument document, OutputStream os) throws IOException;
 }

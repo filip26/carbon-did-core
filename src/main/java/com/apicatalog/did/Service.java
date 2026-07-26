@@ -2,8 +2,7 @@ package com.apicatalog.did;
 
 import java.util.Collection;
 import java.util.Map;
-
-import com.apicatalog.did.Document.Relationship;
+import java.util.Optional;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#services">DID Document
@@ -18,12 +17,12 @@ public interface Service {
 
     @FunctionalInterface
     public interface Resolver {
-        Collection<Service> resolve(DidUrl url, Map<String, Object> options);
+        Optional<Service> resolveService(DidUrl url, Map<String, Object> options);
     }
 
     @FunctionalInterface
     public interface Dereferencer {
-        Collection<Service> dereference(DidUrl url, Document document, Relationship rel);
+        Optional<Service> findService(DidDocument document, DidUrl url);
     }
 
     /**
