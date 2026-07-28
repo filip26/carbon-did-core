@@ -1,6 +1,7 @@
 package com.apicatalog.did.primitive;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Map;
 
 import com.apicatalog.did.Did;
@@ -59,12 +60,13 @@ public record JsonWebKey(
          * unexpected type result in an {@link IllegalArgumentException}.
          * </p>
          *
+         * @param context
          * @param compacted compacted object
          * @return verification method
          * @throws IllegalArgumentException if the input contains invalid or unsupported
          *                                  properties
          */
-        public JsonWebKey adapt(Map<String, Object> compacted) {
+        public static JsonWebKey adapt(Collection<String> context, Map<String, Object> compacted) {
 
             DidUrl id = null;
             Did controller = null;

@@ -1,6 +1,8 @@
 package com.apicatalog.did;
 
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.function.IntPredicate;
 
@@ -345,6 +347,43 @@ public record Did(
     @Override
     public String toString() {
         return SCHEME + ":" + method + ":" + methodSpecificId;
+    }
+
+    /**
+     * Decodes percent-encoded sequences into bytes interpreted as UTF-8.
+     *
+     * @param encoded
+     * @return decoded string
+     */
+    public static String decode(final String encoded) {
+        if (encoded == null || encoded.isEmpty()) {
+            return encoded;
+        }
+
+        if (encoded.indexOf('%') == -1) {
+            return encoded;
+        }
+
+        final int length = encoded.length();
+        final ByteBuffer buffer = ByteBuffer.allocate(length);
+
+        for (int i = 0; i < length;) {
+            final char c = encoded.charAt(i);
+
+            if (c == '%') {
+                final int high = Character.digit(encoded.charAt(i + 1), 16);
+                final int low = Character.digit(encoded.charAt(i + 2), 16);
+                buffer.put((byte) ((high << 4) | low));
+                i += 3;
+
+            } else {
+                buffer.put((byte) c);
+                i++;
+            }
+        }
+
+        buffer.flip();
+        return StandardCharsets.UTF_8.decode(buffer).toString();
     }
 
     /**

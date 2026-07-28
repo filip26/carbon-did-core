@@ -1,6 +1,7 @@
 package com.apicatalog.did.primitive;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -45,12 +46,13 @@ public record MultiKey(
         /**
          * Creates a {@link MultiKey} verification method from a compacted object.
          *
+         * @param context
          * @param compacted compacted verification method object
          * @return verification method
          * @throws IllegalArgumentException if the input contains invalid or unsupported
          *                                  properties
          */
-        public MultiKey adapt(Map<String, Object> compacted) {
+        public MultiKey adapt(Collection<String> context, Map<String, Object> compacted) {
 
             DidUrl id = null;
             Did controller = null;

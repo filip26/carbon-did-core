@@ -1,11 +1,12 @@
 package com.apicatalog.did;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -112,9 +113,9 @@ public interface DidDocument {
 
     Set<Relationship> relationships();
 
-    Collection<VerificationMethod> methods(Relationship relationship);
+    Collection<VerificationMethod> methods(Relationship rel);
 
-    default Collection<DidUrl> remoteMethods(Relationship relationship) {
+    default Collection<DidUrl> remoteMethods(Relationship rel) {
         return List.of();
     }
 
@@ -177,7 +178,7 @@ public interface DidDocument {
          *
          * @return {@code true} if deactivated, otherwise {@code false}
          */
-        default boolean deactivated() {
+        default boolean isDeactivated() {
             return false;
         }
 
@@ -214,7 +215,7 @@ public interface DidDocument {
          * @return a set of equivalent DIDs, never {@code null}
          */
         default Set<Did> equivalentId() {
-            return Collections.emptySet();
+            return Set.of();
         }
 
         /**
@@ -224,6 +225,83 @@ public interface DidDocument {
          */
         default Did canonicalId() {
             return null;
+        }
+    }
+
+    public static Builder builder(Did did) {
+        return new Builder(did);
+    }
+
+    public static class Builder {
+
+        private Did id;
+
+        private List<Entry<Relationship, String>> references;
+        private Map<String, VerificationMethod> methods;
+        private Map<Relationship, Collection<VerificationMethod>> relations;
+
+        public Builder(Did id) {
+            this.id = id;
+        }
+
+        public void method(Relationship rel, VerificationMethod method) {
+            if (methods == null) {
+                methods = new HashMap<>();
+                relations = new HashMap<>();
+            }
+            methods.put(method.id().toString(), method);
+            relations.computeIfAbsent(rel, _ -> new ArrayList<>()).add(method);
+        }
+
+        public void reference(Relationship rel, String refId) {
+            if (references == null) {
+                references = new ArrayList<>();
+            }
+
+            references.add(Map.entry(rel,
+                    refId.startsWith("#")
+                            ? id.toString() + refId
+                            : refId));
+        }
+
+        public void controller(ArrayList<Did> controller) {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void alsoKnownAs(Collection<String> alsoKnownAs) {
+            // TODO Auto-generated method stub
+        }
+
+        public DidDocument build() {
+
+            if (references != null) {
+                for (var ref : references) {
+                    var method = methods.get(ref.getValue());
+                    if (method == null) {
+                        throw new IllegalArgumentException();
+                    }
+                    method(ref.getKey(), method);
+                }
+            }
+
+            return new Document(id, Map.copyOf(relations));
+        }
+
+        private static record Document(
+                Did id,
+                Map<Relationship, Collection<VerificationMethod>> relations) implements DidDocument {
+
+            @Override
+            public Set<Relationship> relationships() {
+                return relations.keySet();
+            }
+
+            @Override
+            public Collection<VerificationMethod> methods(Relationship rel) {
+                return relations.get(rel);
+            }
+
         }
     }
 }

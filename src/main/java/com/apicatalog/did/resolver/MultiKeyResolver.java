@@ -134,7 +134,7 @@ public final class MultiKeyResolver {
         return Arrays.equals(encoded, 0, codeVarint.length, codeVarint, 0, codeVarint.length);
     }
 
-    public static byte[] decode(byte[] codeVarint, byte[] encoded) {
+    private static byte[] decode(byte[] codeVarint, byte[] encoded) {
         return Arrays.copyOfRange(encoded, codeVarint.length, encoded.length);
     }
 }
