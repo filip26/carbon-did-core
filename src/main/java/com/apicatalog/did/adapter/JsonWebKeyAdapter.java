@@ -68,6 +68,6 @@ public class JsonWebKeyAdapter implements DidDocumentAdapter.MethodAdapter {
                     "Unsupported property: " + entry.getKey());
             }
         }
-        return new JsonWebKey(id, controller, expires, revoked, publicKeyJwk, secretKeyJwk);
+        return new JsonWebKey(id, typeName, controller, expires, revoked, publicKeyJwk, secretKeyJwk);
     }
 }

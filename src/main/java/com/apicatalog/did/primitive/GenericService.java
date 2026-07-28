@@ -6,8 +6,7 @@ import java.util.Objects;
 import com.apicatalog.did.Service;
 
 /**
- * Represents a generic <a href="https://www.w3.org/TR/cid-1.0/#services">CID
- * Service</a>.
+ * Represents a generic DID Service.
  * 
  * <p>
  * This implementation stores service information without imposing a specific

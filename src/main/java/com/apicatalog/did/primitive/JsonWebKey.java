@@ -19,6 +19,7 @@ import com.apicatalog.did.VerificationMethod;
  * </p>
  *
  * @param id           The unique identifier of the verification method.
+ * @param type
  * @param controller   The entity controlling this verification method.
  * @param expires      The timestamp when this key expires, or null if not
  *                     applicable.
@@ -31,6 +32,7 @@ import com.apicatalog.did.VerificationMethod;
  */
 public record JsonWebKey(
         DidUrl id,
+        String type,
         Did controller,
         Instant expires,
         Instant revoked,
@@ -42,9 +44,4 @@ public record JsonWebKey(
 
     /** Verification method type. */
     public static final String TYPE_NAME = "JsonWebKey";
-
-    @Override
-    public String type() {
-        return TYPE;
-    }
 }

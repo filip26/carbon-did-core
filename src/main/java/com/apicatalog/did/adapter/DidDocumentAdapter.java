@@ -79,11 +79,11 @@ public class DidDocumentAdapter {
                             throw new IllegalArgumentException();
                         }
 
-                        if (mapValue.get("id") instanceof String idValue && idValue.startsWith("#")) {
+                        if (mapValue.get(DidVocab.KEY_ID) instanceof String idValue && idValue.startsWith("#")) {
 
                             var mapClone = HashMap.<String, Object>newHashMap(mapValue.size());
                             mapClone.putAll(mapValue);
-                            mapClone.put("id", did.toString() + idValue);
+                            mapClone.put(DidVocab.KEY_ID, did.toString() + idValue);
 
                             builder.method(rel, methodAdapter.getValue().readMethod(context, mapClone));
 

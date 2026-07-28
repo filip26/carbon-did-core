@@ -13,18 +13,18 @@ public class GenericServiceAdapter {
     /**
      * Creates a {@link GenericService} from a compacted object.
      *
-     * @param compacted compacted service representation
+     * @param document compacted service representation
      * @return parsed generic service
      * @throws IllegalArgumentException if an unsupported property or invalid value
      *                                  is encountered
      */
-    public static GenericService from(Map<String, Object> compacted) {
+    public static GenericService from(Map<String, Object> document) {
 
         String id = null;
         Collection<String> type = null;
         Collection<Object> endpoints = List.of();
 
-        for (var entry : compacted.entrySet()) {
+        for (var entry : document.entrySet()) {
 
             if (entry.getValue() == null) {
                 continue;
