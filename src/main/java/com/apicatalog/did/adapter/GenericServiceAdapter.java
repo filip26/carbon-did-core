@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.apicatalog.did.DidVocab;
 import com.apicatalog.did.primitive.GenericService;
 
 public class GenericServiceAdapter {
@@ -30,9 +31,9 @@ public class GenericServiceAdapter {
             }
 
             switch (entry.getKey()) {
-            case Vocab.KEY_ID -> id = MapEntryAdapter.url(entry);
-            case Vocab.KEY_TYPE -> type = MapEntryAdapter.stringCollection(entry);
-            case Vocab.KEY_SERVICE_ENDPOINT -> endpoints = MapEntryAdapter.collection(entry);
+            case DidVocab.KEY_ID -> id = MapEntryAdapter.url(entry);
+            case DidVocab.KEY_TYPE -> type = MapEntryAdapter.stringCollection(entry);
+            case DidVocab.KEY_SERVICE_ENDPOINT -> endpoints = MapEntryAdapter.collection(entry);
 
             default -> throw new IllegalArgumentException(
                     "Unsupported property: " + entry.getKey());

@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidDocument;
+import com.apicatalog.did.DidVocab;
 import com.apicatalog.did.DidDocument.Relationship;
 import com.apicatalog.did.VerificationMethod;
 
@@ -38,24 +39,24 @@ public class DidDocumentAdapter {
             throw new IllegalArgumentException();
         }
 
-        if (!did.toString().equals(document.get("id"))) {
+        if (!did.toString().equals(document.get(DidVocab.KEY_ID))) {
             throw new IllegalArgumentException();
         }
 
-        var builder = DidDocument.builder(did);
+        var builder = DidDocument.newBuilder(did);
 
         for (var entry : document.entrySet()) {
 
             switch (entry.getKey()) {
-            case Vocab.KEY_ID:
+            case DidVocab.KEY_ID:
                 break;
 
-            case "authentication",
-                    "verificationMethod",
-                    "assertionMethod",
-                    "keyAgreement",
-                    "capabilityInvocation",
-                    "capabilityDelegation":
+            case DidVocab.KEY_AUTHENTICATION,
+                    DidVocab.KEY_VERIFICATION_METHOD,
+                    DidVocab.KEY_ASSERTION_METHOD,
+                    DidVocab.KEY_KEY_AGREEMENT,
+                    DidVocab.KEY_CAPABILITY_INVOCATION,
+                    DidVocab.KEY_CAPABILITY_DELEGATION:
 
                 var methods = asList(entry.getValue());
                 for (var method : methods) {
@@ -94,14 +95,12 @@ public class DidDocumentAdapter {
                         throw new IllegalArgumentException();
                     }
                 }
-                IO.println(entry);
-
                 break;
 
-            case "service":
+            case DidVocab.KEY_SERVICE:
                 break;
 
-            case Vocab.KEY_CONTROLLER:
+            case DidVocab.KEY_CONTROLLER:
                 var controllers = asList(entry.getValue());
                 if (!controllers.isEmpty()) {
                     var controllerValue = new ArrayList<Did>(controllers.size());
@@ -117,7 +116,7 @@ public class DidDocumentAdapter {
                 }
                 break;
 
-            case "alsoKnownAs":
+            case DidVocab.KEY_ALSO_KNOWN_AS:
                 var aliases = asList(entry.getValue());
                 if (!aliases.isEmpty()) {
                     var alsoKnownAsValue = new ArrayList<String>(aliases.size());
@@ -142,7 +141,7 @@ public class DidDocumentAdapter {
         return builder.build();
     }
 
-    static Collection<String> getContexts(Map<String, Object> document) {
+    private static Collection<String> getContexts(Map<String, Object> document) {
         return switch (document.get("@context")) {
         case Collection<?> col -> col.stream()
                 .map(item -> {
@@ -160,7 +159,7 @@ public class DidDocumentAdapter {
         };
     }
 
-    static Collection<?> asList(Object value) {
+    private static Collection<?> asList(Object value) {
         return (value instanceof Collection<?> col) ? col : (value != null ? List.of(value) : List.of());
     }
 }

@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
+import com.apicatalog.did.DidVocab;
 import com.apicatalog.did.primitive.MultiKey;
 
 public class MultiKeyAdapter implements DidDocumentAdapter.MethodAdapter {
@@ -42,19 +43,19 @@ public class MultiKeyAdapter implements DidDocumentAdapter.MethodAdapter {
             }
 
             switch (entry.getKey()) {
-            case Vocab.KEY_ID -> id = MapEntryAdapter.didUrl(entry);
-            case Vocab.KEY_TYPE -> {
+            case DidVocab.KEY_ID -> id = MapEntryAdapter.didUrl(entry);
+            case DidVocab.KEY_TYPE -> {
                 if (!MultiKey.TYPE_NAME.equals(entry.getValue())) {
                     throw new IllegalArgumentException(
                             "Expected type '" + MultiKey.TYPE_NAME + "' but found '" + entry.getValue() + '\'');
                 }
             }
-            case Vocab.KEY_CONTROLLER -> controller = MapEntryAdapter.did(entry);
-            case Vocab.KEY_EXPIRES -> expires = MapEntryAdapter.instant(entry);
-            case Vocab.KEY_REVOKED -> revoked = MapEntryAdapter.instant(entry);
-            case Vocab.KEY_PUBLIC_KEY_MULTIBASE ->
+            case DidVocab.KEY_CONTROLLER -> controller = MapEntryAdapter.did(entry);
+            case DidVocab.KEY_EXPIRES -> expires = MapEntryAdapter.instant(entry);
+            case DidVocab.KEY_REVOKED -> revoked = MapEntryAdapter.instant(entry);
+            case DidVocab.KEY_PUBLIC_KEY_MULTIBASE ->
                 publicKey = multibaseDecoder.apply(MapEntryAdapter.string(entry));
-            case Vocab.KEY_SECRET_KEY_MULTIBASE ->
+            case DidVocab.KEY_SECRET_KEY_MULTIBASE ->
                 secretKey = multibaseDecoder.apply(MapEntryAdapter.string(entry));
 
             default -> throw new IllegalArgumentException(

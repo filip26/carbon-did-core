@@ -1,13 +1,13 @@
 package com.apicatalog.did;
 
 /**
- * Exception thrown during DID resolution.
+ * Exception thrown during DID processing.
  * <p>
  * Indicates resolution failures such as invalid input, not found, unsupported
  * representation, or internal errors.
  * </p>
  */
-public class ResolutionException extends RuntimeException {
+public class DidException extends RuntimeException {
 
     private static final long serialVersionUID = 893194360411977589L;
 
@@ -38,7 +38,7 @@ public class ResolutionException extends RuntimeException {
      * @param did  the DID being resolved (may be {@code null})
      * @param code error code
      */
-    public ResolutionException(String did, ErrorCode code) {
+    public DidException(String did, ErrorCode code) {
         this.did = did;
         this.code = code;
     }
@@ -50,7 +50,7 @@ public class ResolutionException extends RuntimeException {
      * @param code    error code
      * @param message detail message
      */
-    public ResolutionException(String did, ErrorCode code, String message) {
+    public DidException(String did, ErrorCode code, String message) {
         super(message);
         this.did = did;
         this.code = code;
@@ -65,7 +65,7 @@ public class ResolutionException extends RuntimeException {
      * @param did the DID being resolved (may be {@code null})
      * @param e   the cause
      */
-    public ResolutionException(String did, Throwable e) {
+    public DidException(String did, Throwable e) {
         super(e);
         this.did = did;
         this.code = ErrorCode.INTERNAL;
@@ -81,7 +81,7 @@ public class ResolutionException extends RuntimeException {
      * @param message detail message
      * @param e       the cause
      */
-    public ResolutionException(String did, String message, Throwable e) {
+    public DidException(String did, String message, Throwable e) {
         super(message, e);
         this.did = did;
         this.code = ErrorCode.INTERNAL;
@@ -98,7 +98,7 @@ public class ResolutionException extends RuntimeException {
      * @param message detail message
      * @param e       the cause
      */
-    public ResolutionException(String did, ErrorCode code, String message, Throwable e) {
+    public DidException(String did, ErrorCode code, String message, Throwable e) {
         super(message, e);
         this.did = did;
         this.code = code;

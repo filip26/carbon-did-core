@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
+import com.apicatalog.did.DidVocab;
 import com.apicatalog.did.primitive.JsonWebKey;
 
 public class JsonWebKeyAdapter implements DidDocumentAdapter.MethodAdapter {
@@ -51,18 +52,18 @@ public class JsonWebKeyAdapter implements DidDocumentAdapter.MethodAdapter {
             }
 
             switch (entry.getKey()) {
-            case Vocab.KEY_ID -> id = MapEntryAdapter.didUrl(entry);
-            case Vocab.KEY_TYPE -> {
+            case DidVocab.KEY_ID -> id = MapEntryAdapter.didUrl(entry);
+            case DidVocab.KEY_TYPE -> {
                 if (!typeName.equals(entry.getValue())) {
                     throw new IllegalArgumentException(
                             "Expected type '" + typeName + "' but found '" + entry.getValue() + '\'');
                 }
             }
-            case Vocab.KEY_CONTROLLER -> controller = MapEntryAdapter.did(entry);
-            case Vocab.KEY_EXPIRES -> expires = MapEntryAdapter.instant(entry);
-            case Vocab.KEY_REVOKED -> revoked = MapEntryAdapter.instant(entry);
-            case Vocab.KEY_PUBLIC_KEY_JWK -> publicKeyJwk = MapEntryAdapter.object(entry);
-            case Vocab.KEY_SECRET_KEY_JWK -> secretKeyJwk = MapEntryAdapter.object(entry);
+            case DidVocab.KEY_CONTROLLER -> controller = MapEntryAdapter.did(entry);
+            case DidVocab.KEY_EXPIRES -> expires = MapEntryAdapter.instant(entry);
+            case DidVocab.KEY_REVOKED -> revoked = MapEntryAdapter.instant(entry);
+            case DidVocab.KEY_PUBLIC_KEY_JWK -> publicKeyJwk = MapEntryAdapter.object(entry);
+            case DidVocab.KEY_SECRET_KEY_JWK -> secretKeyJwk = MapEntryAdapter.object(entry);
             default -> throw new IllegalArgumentException(
                     "Unsupported property: " + entry.getKey());
             }

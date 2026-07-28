@@ -25,14 +25,12 @@ public interface DidDocument {
     }
 
     public enum Relationship {
-        VERIFICATION("verificationMethod"),
-        AUTHENTICATION("authentication"),
-        ASSERTION("assertionMethod"),
-        KEY_AGREEMENT("keyAgreement"),
-        CAPABILITY_INVOCATION("capabilityInvocation"),
-        CAPABILITY_DELEGATION("capabilityDelegation");
-
-        public static final String VOCAB = "https://w3id.org/security#";
+        VERIFICATION(DidVocab.KEY_VERIFICATION_METHOD),
+        AUTHENTICATION(DidVocab.KEY_AUTHENTICATION),
+        ASSERTION(DidVocab.KEY_ASSERTION_METHOD),
+        KEY_AGREEMENT(DidVocab.KEY_KEY_AGREEMENT),
+        CAPABILITY_INVOCATION(DidVocab.KEY_CAPABILITY_INVOCATION),
+        CAPABILITY_DELEGATION(DidVocab.KEY_CAPABILITY_DELEGATION);
 
         private final String name;
         private final String uri;
@@ -50,7 +48,7 @@ public interface DidDocument {
 
         Relationship(String name) {
             this.name = name;
-            this.uri = VOCAB + (name.endsWith("Method") ? name : name + "Method");
+            this.uri = DidVocab.NAMESPACE + (name.endsWith("Method") ? name : name + "Method");
         }
 
         public String getName() {
@@ -145,7 +143,6 @@ public interface DidDocument {
     public record WithMetadata(
             DidDocument.Metadata metadata,
             DidDocument document) {
-
     }
 
     /**
@@ -228,7 +225,7 @@ public interface DidDocument {
         }
     }
 
-    public static Builder builder(Did did) {
+    public static Builder newBuilder(Did did) {
         return new Builder(did);
     }
 
@@ -283,11 +280,11 @@ public interface DidDocument {
                     var method = methods.get(ref.getValue());
                     if (method == null) {
                         if (ref.getValue().startsWith(id.toString() + "#")) {
-                            throw new IllegalArgumentException();                            
+                            throw new IllegalArgumentException();
                         }
-                     
-                        //TODO remote method
-                        
+
+                        // TODO remote method
+
                     } else {
                         method(ref.getKey(), method);
                     }
