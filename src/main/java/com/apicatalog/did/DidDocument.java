@@ -235,6 +235,8 @@ public interface DidDocument {
     public static class Builder {
 
         private Did id;
+        private Collection<Did> controller;
+        private Collection<String> alsoKnownAs;
 
         private List<Entry<Relationship, String>> references;
         private Map<String, VerificationMethod> methods;
@@ -242,6 +244,8 @@ public interface DidDocument {
 
         public Builder(Did id) {
             this.id = id;
+            this.controller = List.of();
+            this.alsoKnownAs = List.of();
         }
 
         public void method(Relationship rel, VerificationMethod method) {
@@ -264,13 +268,12 @@ public interface DidDocument {
                             : refId));
         }
 
-        public void controller(ArrayList<Did> controller) {
-            // TODO Auto-generated method stub
-
+        public void controller(Collection<Did> controller) {
+            this.controller = controller;
         }
 
         public void alsoKnownAs(Collection<String> alsoKnownAs) {
-            // TODO Auto-generated method stub
+            this.alsoKnownAs = alsoKnownAs;
         }
 
         public DidDocument build() {
@@ -279,17 +282,25 @@ public interface DidDocument {
                 for (var ref : references) {
                     var method = methods.get(ref.getValue());
                     if (method == null) {
-                        throw new IllegalArgumentException();
+                        if (ref.getValue().startsWith(id.toString() + "#")) {
+                            throw new IllegalArgumentException();                            
+                        }
+                     
+                        //TODO remote method
+                        
+                    } else {
+                        method(ref.getKey(), method);
                     }
-                    method(ref.getKey(), method);
                 }
             }
 
-            return new Document(id, Map.copyOf(relations));
+            return new Document(id, controller, alsoKnownAs, Map.copyOf(relations));
         }
 
         private static record Document(
                 Did id,
+                Collection<Did> controller,
+                Collection<String> alsoKnownAs,
                 Map<Relationship, Collection<VerificationMethod>> relations) implements DidDocument {
 
             @Override
@@ -301,7 +312,6 @@ public interface DidDocument {
             public Collection<VerificationMethod> methods(Relationship rel) {
                 return relations.get(rel);
             }
-
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.apicatalog.did.io;
+package com.apicatalog.did.adapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,12 +14,12 @@ import com.apicatalog.did.DidDocument.Relationship;
 import com.apicatalog.did.VerificationMethod;
 
 public class DidDocumentAdapter {
-   
+
     @FunctionalInterface
     public interface MethodAdapter {
         VerificationMethod readMethod(Collection<String> context, Map<String, Object> method);
     }
-        
+
     private final Predicate<Collection<String>> isAccepted;
     private final Map<String, Entry<Predicate<Collection<String>>, MethodAdapter>> methodAdapters;
 
@@ -30,7 +30,6 @@ public class DidDocumentAdapter {
         this.methodAdapters = methodAdapters;
     }
 
-//    @Override
     public DidDocument readDocument(Did did, Map<String, Object> document) {
 
         var context = getContexts(document);
@@ -48,7 +47,7 @@ public class DidDocumentAdapter {
         for (var entry : document.entrySet()) {
 
             switch (entry.getKey()) {
-            case "id":
+            case Vocab.KEY_ID:
                 break;
 
             case "authentication",
@@ -102,7 +101,7 @@ public class DidDocumentAdapter {
             case "service":
                 break;
 
-            case "controller":
+            case Vocab.KEY_CONTROLLER:
                 var controllers = asList(entry.getValue());
                 if (!controllers.isEmpty()) {
                     var controllerValue = new ArrayList<Did>(controllers.size());
@@ -133,7 +132,11 @@ public class DidDocumentAdapter {
                     builder.alsoKnownAs(alsoKnownAsValue);
                 }
                 break;
+
+            default:
+                throw new IllegalArgumentException();
             }
+
         }
 
         return builder.build();

@@ -1,4 +1,4 @@
-package com.apicatalog.did.primitive;
+package com.apicatalog.did.adapter;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;

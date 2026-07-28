@@ -3,8 +3,8 @@ package com.apicatalog.did;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URI;
 import java.util.stream.Stream;
@@ -56,22 +56,14 @@ class DidTest {
     @ParameterizedTest()
     @MethodSource({ "negativeVectors" })
     void ofStringNegative(String uri) {
-        try {
-            Did.parse(uri);
-            fail();
-        } catch (IllegalArgumentException e) {
-            /* expected */ }
+        assertThrowsExactly(IllegalArgumentException.class, () -> Did.parse(uri));
     }
 
     @DisplayName("negative: of(URI)")
     @ParameterizedTest()
     @MethodSource({ "negativeVectors" })
     void ofUriNegative(String uri) {
-        try {
-            Did.from(URI.create(uri));
-            fail();
-        } catch (IllegalArgumentException | NullPointerException e) {
-            /* expected */ }
+        assertThrowsExactly(IllegalArgumentException.class, () -> Did.from(URI.create(uri)));
     }
 
     @DisplayName("toUri()")
@@ -90,7 +82,7 @@ class DidTest {
     void stringIsDid(String uri) {
         assertTrue(Did.isDid(uri));
     }
-    
+
     @DisplayName("negative: isDid(String)")
     @ParameterizedTest()
     @MethodSource({ "negativeVectors" })

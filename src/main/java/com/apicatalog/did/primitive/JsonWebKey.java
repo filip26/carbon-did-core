@@ -1,7 +1,6 @@
 package com.apicatalog.did.primitive;
 
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Map;
 
 import com.apicatalog.did.Did;
@@ -47,58 +46,5 @@ public record JsonWebKey(
     @Override
     public String type() {
         return TYPE;
-    }
-
-    public static class MapAdapter {
-
-        /**
-         * Creates a {@code JsonWebKey} from a compacted object.
-         *
-         * <p>
-         * The supplied map must contain only properties defined by the
-         * {@code JsonWebKey} verification method. Unknown properties or values of an
-         * unexpected type result in an {@link IllegalArgumentException}.
-         * </p>
-         *
-         * @param context
-         * @param compacted compacted object
-         * @return verification method
-         * @throws IllegalArgumentException if the input contains invalid or unsupported
-         *                                  properties
-         */
-        public static JsonWebKey adapt(Collection<String> context, Map<String, Object> compacted) {
-
-            DidUrl id = null;
-            Did controller = null;
-            Instant expires = null;
-            Instant revoked = null;
-            Map<String, Object> publicKeyJwk = null;
-            Map<String, Object> secretKeyJwk = null;
-
-            for (var entry : compacted.entrySet()) {
-
-                if (entry.getValue() == null) {
-                    continue;
-                }
-
-                switch (entry.getKey()) {
-                case Vocab.KEY_ID -> id = MapEntryAdapter.didUrl(entry);
-                case Vocab.KEY_TYPE -> {
-                    if (!TYPE_NAME.equals(entry.getValue())) {
-                        throw new IllegalArgumentException(
-                                "Expected type '" + TYPE_NAME + "' but found '" + entry.getValue() + '\'');
-                    }
-                }
-                case Vocab.KEY_CONTROLLER -> controller = MapEntryAdapter.did(entry);
-                case Vocab.KEY_EXPIRES -> expires = MapEntryAdapter.instant(entry);
-                case Vocab.KEY_REVOKED -> revoked = MapEntryAdapter.instant(entry);
-                case Vocab.KEY_PUBLIC_KEY_JWK -> publicKeyJwk = MapEntryAdapter.object(entry);
-                case Vocab.KEY_SECRET_KEY_JWK -> secretKeyJwk = MapEntryAdapter.object(entry);
-                default -> throw new IllegalArgumentException(
-                        "Unsupported property: " + entry.getKey());
-                }
-            }
-            return new JsonWebKey(id, controller, expires, revoked, publicKeyJwk, secretKeyJwk);
-        }
     }
 }
