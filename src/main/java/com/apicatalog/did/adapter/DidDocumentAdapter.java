@@ -15,7 +15,7 @@ import com.apicatalog.did.DidVocab;
 import com.apicatalog.did.Service;
 import com.apicatalog.did.VerificationMethod;
 
-public class DidDocumentAdapter {
+public final class DidDocumentAdapter {
 
     @FunctionalInterface
     public interface MethodAdapter {
@@ -32,7 +32,7 @@ public class DidDocumentAdapter {
     private final Map<String, Entry<Predicate<Collection<String>>, MethodAdapter>> methodAdapters;
     private final Map<String, Entry<Predicate<Collection<String>>, ServiceAdapter>> serviceAdapters;
 
-    public DidDocumentAdapter(
+    private DidDocumentAdapter(
             Predicate<Collection<String>> isAccepted,
             Map<String, Entry<Predicate<Collection<String>>, MethodAdapter>> methodAdapters,
             Map<String, Entry<Predicate<Collection<String>>, ServiceAdapter>> serviceAdapters) {
@@ -58,7 +58,7 @@ public class DidDocumentAdapter {
         for (var entry : document.entrySet()) {
 
             switch (entry.getKey()) {
-            case DidVocab.KEY_ID:
+            case DidVocab.KEY_ID, "@context":
                 break;
 
             case DidVocab.KEY_AUTHENTICATION,
@@ -130,9 +130,8 @@ public class DidDocumentAdapter {
                 break;
 
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Unrecognized DID document property '" + entry.getKey() + "'.");
             }
-
         }
 
         return builder.build();
@@ -154,5 +153,44 @@ public class DidDocumentAdapter {
         default ->
             throw new IllegalArgumentException("Invalid @context type: expected a string or a collection of strings");
         };
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private Predicate<Collection<String>> isAccepted;
+
+        private Map<String, Entry<Predicate<Collection<String>>, MethodAdapter>> methodAdapters;
+        private Map<String, Entry<Predicate<Collection<String>>, ServiceAdapter>> serviceAdapters;
+
+        public Builder context(Predicate<Collection<String>> accepts) {
+            this.isAccepted = accepts;
+            this.methodAdapters = new HashMap<>();
+            this.serviceAdapters = new HashMap<>();
+            return this;
+        }
+
+        public Builder method(String typeName, Predicate<Collection<String>> context, MethodAdapter adapter) {
+            this.methodAdapters.put(typeName, Map.entry(context, adapter));
+            return this;
+        }
+
+        public Builder service(String typeName, Predicate<Collection<String>> context, ServiceAdapter adapter) {
+            this.serviceAdapters.put(typeName, Map.entry(context, adapter));
+            return this;
+        }
+
+        public DidDocumentAdapter build() {
+
+            if (methodAdapters.isEmpty() && serviceAdapters.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+
+            return new DidDocumentAdapter(isAccepted, Map.copyOf(methodAdapters), Map.copyOf(serviceAdapters));
+        }
+
     }
 }
