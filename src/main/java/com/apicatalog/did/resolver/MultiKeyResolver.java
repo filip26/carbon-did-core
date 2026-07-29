@@ -86,7 +86,7 @@ public final class MultiKeyResolver {
         throw new IllegalArgumentException();
     }
 
-    public static Builder builder() {
+    public static Builder newBuilder() {
         return new Builder();
     }
 

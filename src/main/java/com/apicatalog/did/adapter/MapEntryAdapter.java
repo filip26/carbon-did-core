@@ -72,6 +72,10 @@ class MapEntryAdapter {
 
     public static Collection<String> stringCollection(Map.Entry<String, Object> entry) {
 
+        if (entry.getValue() == null) {
+            return List.of();
+        }
+        
         if (entry.getValue() instanceof String value) {
             return List.of(value);
         }
@@ -96,13 +100,14 @@ class MapEntryAdapter {
                         + "' must be a string or collection of strings.");
     }
 
-    public static Collection<Object> collection(Map.Entry<String, Object> entry) {
-
+    public static Collection<Object> toCollection(Map.Entry<String, Object> entry) {
         if (entry.getValue() instanceof Collection<?> values) {
             return List.copyOf(values);
-        }
 
-        return List.of(entry.getValue());
+        } else if (entry.getValue() != null) {
+            return List.of(entry.getValue());
+        }
+        return List.of();
     }
 
     private static final boolean startsWithScheme(final String uri) {

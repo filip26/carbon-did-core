@@ -33,7 +33,7 @@ public class GenericServiceAdapter {
             switch (entry.getKey()) {
             case DidVocab.KEY_ID -> id = MapEntryAdapter.url(entry);
             case DidVocab.KEY_TYPE -> type = MapEntryAdapter.stringCollection(entry);
-            case DidVocab.KEY_SERVICE_ENDPOINT -> endpoints = MapEntryAdapter.collection(entry);
+            case DidVocab.KEY_SERVICE_ENDPOINT -> endpoints = MapEntryAdapter.toCollection(entry);
 
             default -> throw new IllegalArgumentException(
                     "Unsupported property: " + entry.getKey());

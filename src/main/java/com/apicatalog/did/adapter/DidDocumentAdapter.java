@@ -10,8 +10,9 @@ import java.util.function.Predicate;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidDocument;
-import com.apicatalog.did.DidVocab;
 import com.apicatalog.did.DidDocument.Relationship;
+import com.apicatalog.did.DidVocab;
+import com.apicatalog.did.Service;
 import com.apicatalog.did.VerificationMethod;
 
 public class DidDocumentAdapter {
@@ -21,14 +22,23 @@ public class DidDocumentAdapter {
         VerificationMethod readMethod(Collection<String> context, Map<String, Object> method);
     }
 
+    @FunctionalInterface
+    public interface ServiceAdapter {
+        Service readService(Collection<String> context, Map<String, Object> method);
+    }
+
     private final Predicate<Collection<String>> isAccepted;
+
     private final Map<String, Entry<Predicate<Collection<String>>, MethodAdapter>> methodAdapters;
+    private final Map<String, Entry<Predicate<Collection<String>>, ServiceAdapter>> serviceAdapters;
 
     public DidDocumentAdapter(
             Predicate<Collection<String>> isAccepted,
-            Map<String, Entry<Predicate<Collection<String>>, MethodAdapter>> methodAdapters) {
+            Map<String, Entry<Predicate<Collection<String>>, MethodAdapter>> methodAdapters,
+            Map<String, Entry<Predicate<Collection<String>>, ServiceAdapter>> serviceAdapters) {
         this.isAccepted = isAccepted;
         this.methodAdapters = methodAdapters;
+        this.serviceAdapters = serviceAdapters;
     }
 
     public DidDocument readDocument(Did did, Map<String, Object> document) {
@@ -58,8 +68,7 @@ public class DidDocumentAdapter {
                     DidVocab.KEY_CAPABILITY_INVOCATION,
                     DidVocab.KEY_CAPABILITY_DELEGATION:
 
-                var methods = asList(entry.getValue());
-                for (var method : methods) {
+                for (var method : MapEntryAdapter.toCollection(entry)) {
 
                     var rel = Relationship.from(entry.getKey());
 
@@ -68,11 +77,11 @@ public class DidDocumentAdapter {
 
                     } else if (method instanceof Map mapValue) {
 
-                        var methodAdapter = methodAdapters.get(mapValue.get("type"));
+                        var methodAdapter = methodAdapters.get(mapValue.get(DidVocab.KEY_TYPE));
 
                         if (methodAdapter == null) {
                             throw new IllegalArgumentException(
-                                    "No adapter is configured for type '" + mapValue.get("type") + "'.");
+                                    "No adapter is configured for type '" + mapValue.get(DidVocab.KEY_TYPE) + "'.");
                         }
 
                         if (!methodAdapter.getKey().test(context)) {
@@ -101,35 +110,23 @@ public class DidDocumentAdapter {
                 break;
 
             case DidVocab.KEY_CONTROLLER:
-                var controllers = asList(entry.getValue());
+                var controllers = MapEntryAdapter.toCollection(entry);
                 if (!controllers.isEmpty()) {
-                    var controllerValue = new ArrayList<Did>(controllers.size());
+                    var controllerContainer = new ArrayList<Did>(controllers.size());
                     for (var controller : controllers) {
                         if (controller instanceof String stringValue) {
-                            controllerValue.add(Did.parse(stringValue));
+                            controllerContainer.add(Did.parse(stringValue));
 
                         } else {
                             throw new IllegalArgumentException();
                         }
                     }
-                    builder.controller(controllerValue);
+                    builder.controller(controllerContainer);
                 }
                 break;
 
             case DidVocab.KEY_ALSO_KNOWN_AS:
-                var aliases = asList(entry.getValue());
-                if (!aliases.isEmpty()) {
-                    var alsoKnownAsValue = new ArrayList<String>(aliases.size());
-                    for (var alias : aliases) {
-                        if (alias instanceof String stringValue) {
-                            alsoKnownAsValue.add(stringValue);
-
-                        } else {
-                            throw new IllegalArgumentException();
-                        }
-                    }
-                    builder.alsoKnownAs(alsoKnownAsValue);
-                }
+                builder.alsoKnownAs(MapEntryAdapter.stringCollection(entry));
                 break;
 
             default:
@@ -157,9 +154,5 @@ public class DidDocumentAdapter {
         default ->
             throw new IllegalArgumentException("Invalid @context type: expected a string or a collection of strings");
         };
-    }
-
-    private static Collection<?> asList(Object value) {
-        return (value instanceof Collection<?> col) ? col : (value != null ? List.of(value) : List.of());
     }
 }
