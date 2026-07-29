@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.apicatalog.did.method.VerificationMethod;
+import com.apicatalog.did.service.Service;
+
 import java.util.Set;
 
 /**
@@ -48,7 +52,7 @@ public interface DidDocument {
 
         Relationship(String name) {
             this.name = name;
-            this.uri = DidVocab.NAMESPACE + (name.endsWith("Method") ? name : name + "Method");
+            this.uri = DidVocab.NS_SECURITY + (name.endsWith("Method") ? name : name + "Method");
         }
 
         public String getName() {
@@ -291,7 +295,13 @@ public interface DidDocument {
                 }
             }
 
-            return new Document(id, controller, alsoKnownAs, Map.copyOf(relations));
+            return new Document(
+                    id,
+                    controller,
+                    alsoKnownAs,
+                    relations != null
+                            ? Map.copyOf(relations)
+                            : Map.of());
         }
 
         private static record Document(

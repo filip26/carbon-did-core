@@ -7,7 +7,7 @@ import java.util.Map;
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
 import com.apicatalog.did.DidVocab;
-import com.apicatalog.did.primitive.JsonWebKey;
+import com.apicatalog.did.method.JsonWebKey;
 
 public class JsonWebKeyAdapter implements DidDocumentAdapter.MethodAdapter {
 

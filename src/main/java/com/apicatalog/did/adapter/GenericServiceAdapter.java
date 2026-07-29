@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.apicatalog.did.DidVocab;
-import com.apicatalog.did.primitive.GenericService;
+import com.apicatalog.did.service.GenericService;
 
 public class GenericServiceAdapter {
 

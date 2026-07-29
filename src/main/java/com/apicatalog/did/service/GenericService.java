@@ -1,27 +1,25 @@
-package com.apicatalog.did.primitive;
+package com.apicatalog.did.service;
 
 import java.util.Collection;
 import java.util.Objects;
-
-import com.apicatalog.did.Service;
 
 /**
  * Represents a generic DID Service.
  * 
  * <p>
  * This implementation stores service information without imposing a specific
- * endpoint model. Endpoint values may be strings and maps.
+ * endpoint model. Endpoint values may be strings, maps, or materialized
+ * instances.
  * </p>
  * 
  * @param id        the service identifier (optional)
  * @param type      a collection of types defining the service
- * @param endpoints a collection of service endpoints; this collection can
- *                  contain strings and maps
+ * @param endpoints a collection of service endpoints
  */
-public record GenericService(
+public record GenericService<T>(
         String id,
         Collection<String> type,
-        Collection<Object> endpoints) implements Service {
+        Collection<T> endpoints) implements Service {
 
     /**
      * Creates a {@code DidService}.

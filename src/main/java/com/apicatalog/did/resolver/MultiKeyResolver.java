@@ -7,9 +7,9 @@ import java.util.Map;
 
 import com.apicatalog.did.DidDocument;
 import com.apicatalog.did.DidDocument.Relationship;
-import com.apicatalog.did.primitive.MultiKey;
+import com.apicatalog.did.method.MultiKey;
+import com.apicatalog.did.method.VerificationMethod;
 import com.apicatalog.did.DidUrl;
-import com.apicatalog.did.VerificationMethod;
 
 public final class MultiKeyResolver {
 

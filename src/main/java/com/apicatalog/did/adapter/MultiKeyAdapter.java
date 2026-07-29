@@ -8,7 +8,7 @@ import java.util.function.Function;
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
 import com.apicatalog.did.DidVocab;
-import com.apicatalog.did.primitive.MultiKey;
+import com.apicatalog.did.method.MultiKey;
 
 public class MultiKeyAdapter implements DidDocumentAdapter.MethodAdapter {
 

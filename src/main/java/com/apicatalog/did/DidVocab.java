@@ -6,7 +6,9 @@ public final class DidVocab {
         // no instance allowed, just container
     }
     
-    public static final String NAMESPACE = "https://w3id.org/security#";
+    public static final String NS_SECURITY = "https://w3id.org/security#";
+    public static final String NS_ACTIVITYSTREAMS = "https://www.w3.org/ns/activitystreams#";
+    public static final String NS_DID = "https://www.w3.org/ns/did#";
 
     public static final String KEY_ID = "id";
     public static final String KEY_TYPE = "type";

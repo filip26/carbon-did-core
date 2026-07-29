@@ -1,8 +1,11 @@
-package com.apicatalog.did;
+package com.apicatalog.did.method;
 
 import java.util.Map;
 import java.util.Optional;
 
+import com.apicatalog.did.Did;
+import com.apicatalog.did.DidDocument;
+import com.apicatalog.did.DidUrl;
 import com.apicatalog.did.DidDocument.Relationship;
 
 /**

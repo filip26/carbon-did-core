@@ -11,9 +11,9 @@ import java.util.function.Predicate;
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidDocument;
 import com.apicatalog.did.DidDocument.Relationship;
+import com.apicatalog.did.method.VerificationMethod;
+import com.apicatalog.did.service.Service;
 import com.apicatalog.did.DidVocab;
-import com.apicatalog.did.Service;
-import com.apicatalog.did.VerificationMethod;
 
 public final class DidDocumentAdapter {
 

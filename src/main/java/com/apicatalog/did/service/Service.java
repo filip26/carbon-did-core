@@ -1,8 +1,11 @@
-package com.apicatalog.did;
+package com.apicatalog.did.service;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+
+import com.apicatalog.did.DidDocument;
+import com.apicatalog.did.DidUrl;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#services">DID Document

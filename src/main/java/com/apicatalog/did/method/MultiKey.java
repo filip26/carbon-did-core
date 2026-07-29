@@ -1,10 +1,9 @@
-package com.apicatalog.did.primitive;
+package com.apicatalog.did.method;
 
 import java.time.Instant;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
-import com.apicatalog.did.VerificationMethod;
 
 /**
  * 
