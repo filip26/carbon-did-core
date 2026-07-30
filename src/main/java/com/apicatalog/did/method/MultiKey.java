@@ -8,6 +8,7 @@ import com.apicatalog.did.DidUrl;
 /**
  * 
  * @param id
+ * @param type
  * @param controller
  * @param expires
  * @param revoked
@@ -17,6 +18,7 @@ import com.apicatalog.did.DidUrl;
  */
 public record MultiKey(
         DidUrl id,
+        String type,
         Did controller,
         Instant expires,
         Instant revoked,
@@ -25,9 +27,4 @@ public record MultiKey(
 
     public static final String TYPE = "https://w3id.org/security#Multikey";
     public static final String TYPE_NAME = "Multikey";
-
-    @Override
-    public String type() {
-        return TYPE_NAME;
-    }
 }

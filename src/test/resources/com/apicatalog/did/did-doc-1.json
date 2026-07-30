@@ -28,21 +28,21 @@
       }
     },
     {
-          "id": "did:example:123456789abcdefghi#key-multikey-1",
-          "type": "Multikey",
-          "controller": "did:example:123456789abcdefghi",
-          "publicKeyMultibase": "z6MkpTHR8VNsBxYwWFChNyCtPMa5sr3AQA92vN8vFYA5yMnj"
-        },
-        {
-          "id": "did:example:123456789abcdefghi#key-jwk-1",
-          "type": "JsonWebKey",
-          "controller": "did:example:123456789abcdefghi",
-          "publicKeyJwk": {
-            "kty": "OKP",
-            "crv": "Ed25519",
-            "x": "O2lwWAJiUzPWiVwhrECsegJqB7m1sqLMkYj88Dq1M1A"
-          }
-        }    
+      "id": "did:example:123456789abcdefghi#key-multikey-1",
+      "type": "Multikey",
+      "controller": "did:example:123456789abcdefghi",
+      "publicKeyMultibase": "z6MkpTHR8VNsBxYwWFChNyCtPMa5sr3AQA92vN8vFYA5yMnj"
+    },
+    {
+      "id": "did:example:123456789abcdefghi#key-jwk-1",
+      "type": "JsonWebKey",
+      "controller": "did:example:123456789abcdefghi",
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "O2lwWAJiUzPWiVwhrECsegJqB7m1sqLMkYj88Dq1M1A"
+      }
+    }    
   ],
   "authentication": [
     "did:example:123456789abcdefghi#keys-1",
@@ -84,24 +84,9 @@
       }
     },
     {
-      "id": "did:example:123456789abcdefghi#linked-domain",
-      "type": "LinkedDomains",
-      "serviceEndpoint": "https://example.com"
-    },
-    {
-      "id": "did:example:123456789abcdefghi#vcs",
-      "type": "VerifiableCredentialService",
-      "serviceEndpoint": "https://example.com/vc/"
-    },
-    {
-      "id": "did:example:123456789abcdefghi#baz",
-      "type": "LinkedVerifiablePresentation",
-      "serviceEndpoint": "ipfs://bafybeihkoviema7g3gxyt6la7vd5ho32ictqbilu3wnlo3rs7ewhnp7lly/verifiable-presentation.jwt"
-    },
-    {
-          "id": "did:example:123456789abcdefghi#cel-storage",
-          "type": "CelStorageService",
-          "serviceEndpoint": "https://storage.googleapis.com/cel-event-logs"
-        }
+      "id": "did:example:123456789abcdefghi#cel-storage",
+      "type": "CelStorageService",
+      "serviceEndpoint": "https://storage.googleapis.com/cel-event-logs"
+    }
   ]
 }

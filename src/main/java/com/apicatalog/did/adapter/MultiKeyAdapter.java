@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidUrl;
@@ -12,10 +13,25 @@ import com.apicatalog.did.method.MultiKey;
 
 public class MultiKeyAdapter implements DidDocumentAdapter.MethodAdapter {
 
+    private final String typeName;
     private final Function<String, byte[]> multibaseDecoder;
+    private final Predicate<byte[]> isCodecAccepted;
 
     public MultiKeyAdapter(Function<String, byte[]> multibaseDecoder) {
+        this(MultiKey.TYPE_NAME, multibaseDecoder, _ -> true);
+    }
+
+    public MultiKeyAdapter(String typeName, Function<String, byte[]> multibaseDecoder) {
+        this(typeName, multibaseDecoder, _ -> true);
+    }
+
+    public MultiKeyAdapter(
+            String typeName,
+            Function<String, byte[]> multibaseDecoder,
+            Predicate<byte[]> isCodecAccepted) {
+        this.typeName = typeName;
         this.multibaseDecoder = multibaseDecoder;
+        this.isCodecAccepted = isCodecAccepted;
     }
 
     /**
@@ -53,11 +69,20 @@ public class MultiKeyAdapter implements DidDocumentAdapter.MethodAdapter {
             case DidVocab.KEY_CONTROLLER -> controller = MapEntryAdapter.did(entry);
             case DidVocab.KEY_EXPIRES -> expires = MapEntryAdapter.instant(entry);
             case DidVocab.KEY_REVOKED -> revoked = MapEntryAdapter.instant(entry);
-            case DidVocab.KEY_PUBLIC_KEY_MULTIBASE ->
-                publicKey = multibaseDecoder.apply(MapEntryAdapter.string(entry));
-            case DidVocab.KEY_SECRET_KEY_MULTIBASE ->
-                secretKey = multibaseDecoder.apply(MapEntryAdapter.string(entry));
-
+            case DidVocab.KEY_PUBLIC_KEY_MULTIBASE -> {
+                var encodedPublicKey = MapEntryAdapter.string(entry);
+                publicKey = multibaseDecoder.apply(encodedPublicKey);
+                if (!isCodecAccepted.test(publicKey)) {
+                    throw new IllegalArgumentException("Unsupported public key multicodec " + encodedPublicKey);
+                }
+            }
+            case DidVocab.KEY_SECRET_KEY_MULTIBASE -> {
+                var encodedSecretKey = MapEntryAdapter.string(entry);
+                secretKey = multibaseDecoder.apply(encodedSecretKey);
+                if (!isCodecAccepted.test(publicKey)) {
+                    throw new IllegalArgumentException("Unsupported private key multicodec " + encodedSecretKey);
+                }
+            }
             default -> throw new IllegalArgumentException(
                     "Unsupported property: " + entry.getKey());
             }
@@ -65,6 +90,7 @@ public class MultiKeyAdapter implements DidDocumentAdapter.MethodAdapter {
 
         return new MultiKey(
                 id,
+                typeName,
                 controller,
                 expires,
                 revoked,
