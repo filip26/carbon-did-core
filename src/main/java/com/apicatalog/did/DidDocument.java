@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.apicatalog.did.method.VerificationMethod;
 import com.apicatalog.did.service.Service;
-
-import java.util.Set;
 
 /**
  * A <a href="https://www.w3.org/TR/did-core/#did-document-properties">DID
@@ -243,10 +242,13 @@ public interface DidDocument {
         private Map<String, VerificationMethod> methods;
         private Map<Relationship, Collection<VerificationMethod>> relations;
 
+        private Collection<Service> service;
+        
         public Builder(Did id) {
             this.id = id;
             this.controller = List.of();
             this.alsoKnownAs = List.of();
+            this.service = List.of();
         }
 
         public void method(Relationship rel, VerificationMethod method) {
@@ -271,6 +273,10 @@ public interface DidDocument {
 
         public void controller(Collection<Did> controller) {
             this.controller = controller;
+        }
+
+        public void service(Collection<Service> service) {
+            this.service = service;
         }
 
         public void alsoKnownAs(Collection<String> alsoKnownAs) {
@@ -301,14 +307,16 @@ public interface DidDocument {
                     alsoKnownAs,
                     relations != null
                             ? Map.copyOf(relations)
-                            : Map.of());
+                            : Map.of(),
+                    List.copyOf(service));
         }
 
         private static record Document(
                 Did id,
                 Collection<Did> controller,
                 Collection<String> alsoKnownAs,
-                Map<Relationship, Collection<VerificationMethod>> relations) implements DidDocument {
+                Map<Relationship, Collection<VerificationMethod>> relations,
+                Collection<Service> service) implements DidDocument {
 
             @Override
             public Set<Relationship> relationships() {

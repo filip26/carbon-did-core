@@ -50,14 +50,12 @@ public interface Service {
     boolean hasEndpoint();
 
     /**
-     * Checks whether this service has the required properties: {@code id},
-     * {@code type}, and at least one {@code serviceEndpoint}.
+     * Checks whether this service has the required properties: {@code type}, and at
+     * least one {@code serviceEndpoint}.
      *
      * @return {@code true} if valid
      */
     default boolean hasRequiredProperties() {
-        return id() != null
-                && type() != null && !type().isEmpty()
-                && hasEndpoint();
+        return type() != null && !type().isEmpty() && hasEndpoint();
     }
 }

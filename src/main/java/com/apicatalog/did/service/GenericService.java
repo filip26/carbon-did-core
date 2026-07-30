@@ -8,18 +8,18 @@ import java.util.Objects;
  * 
  * <p>
  * This implementation stores service information without imposing a specific
- * endpoint model. Endpoint values may be strings, maps, or materialized
- * instances.
+ * endpoint model. Endpoint values may be strings or maps instances.
  * </p>
  * 
  * @param id        the service identifier (optional)
  * @param type      a collection of types defining the service
- * @param endpoints a collection of service endpoints
+ * @param endpoints a collection of service endpoints; values may be strings or
+ *                  maps
  */
-public record GenericService<T>(
+public record GenericService(
         String id,
         Collection<String> type,
-        Collection<T> endpoints) implements Service {
+        Collection<Object> endpoints) implements Service {
 
     /**
      * Creates a {@code DidService}.

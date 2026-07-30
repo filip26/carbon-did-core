@@ -9,7 +9,6 @@ import com.apicatalog.did.service.GenericService;
 
 public class GenericServiceAdapter {
 
-
     /**
      * Creates a {@link GenericService} from a compacted object.
      *
@@ -39,7 +38,7 @@ public class GenericServiceAdapter {
                     "Unsupported property: " + entry.getKey());
             }
         }
-        return new GenericService(id, type, endpoints);
+        return new GenericService(id, List.copyOf(type), List.copyOf(endpoints));
     }
 
 //    /**

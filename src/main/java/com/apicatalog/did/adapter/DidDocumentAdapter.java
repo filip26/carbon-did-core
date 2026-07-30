@@ -11,9 +11,9 @@ import java.util.function.Predicate;
 import com.apicatalog.did.Did;
 import com.apicatalog.did.DidDocument;
 import com.apicatalog.did.DidDocument.Relationship;
+import com.apicatalog.did.DidVocab;
 import com.apicatalog.did.method.VerificationMethod;
 import com.apicatalog.did.service.Service;
-import com.apicatalog.did.DidVocab;
 
 public final class DidDocumentAdapter {
 
@@ -77,11 +77,18 @@ public final class DidDocumentAdapter {
 
                     } else if (method instanceof Map mapValue) {
 
-                        var methodAdapter = methodAdapters.get(mapValue.get(DidVocab.KEY_TYPE));
+                        var methodType = mapValue.get(DidVocab.KEY_TYPE);
+
+                        if (methodType == null) {
+                            throw new IllegalArgumentException(
+                                    "Required verification method type is missing: " + mapValue);
+                        }
+
+                        var methodAdapter = methodAdapters.get(methodType);
 
                         if (methodAdapter == null) {
                             throw new IllegalArgumentException(
-                                    "No adapter is configured for type '" + mapValue.get(DidVocab.KEY_TYPE) + "'.");
+                                    "No adapter is configured for verification method type: " + methodType);
                         }
 
                         if (!methodAdapter.getKey().test(context)) {
@@ -107,6 +114,43 @@ public final class DidDocumentAdapter {
                 break;
 
             case DidVocab.KEY_SERVICE:
+                var services = MapEntryAdapter.toCollection(entry);
+                if (!services.isEmpty()) {
+                    var serviceContainer = new ArrayList<Service>(services.size());
+                    for (var service : services) {
+                        if (service instanceof Map mapValue) {
+
+                            var serviceType = mapValue.get(DidVocab.KEY_TYPE);
+
+                            if (serviceType == null) {
+                                throw new IllegalArgumentException();
+                            }
+
+                            if (!(serviceType instanceof String)) {
+                                throw new IllegalArgumentException(
+                                        "Only services with one type are supported by this implementation, was "
+                                                + serviceType);
+                            }
+
+                            var serviceAdapter = serviceAdapters.get(serviceType);
+
+                            if (serviceAdapter == null) {
+                                throw new IllegalArgumentException(
+                                        "No adapter is configured for type '" + serviceType + "'.");
+                            }
+
+                            if (!serviceAdapter.getKey().test(context)) {
+                                throw new IllegalArgumentException();
+                            }
+
+                            serviceContainer.add(serviceAdapter.getValue().readService(context, mapValue));
+
+                        } else {
+                            throw new IllegalArgumentException();
+                        }
+                    }
+                    builder.service(serviceContainer);
+                }
                 break;
 
             case DidVocab.KEY_CONTROLLER:
