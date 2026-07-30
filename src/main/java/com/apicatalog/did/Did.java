@@ -1,7 +1,8 @@
 package com.apicatalog.did;
 
-import java.io.Serializable;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.function.IntPredicate;
 
@@ -13,17 +14,23 @@ import java.util.function.IntPredicate;
  * the {@code method} and the {@code method-specific-id} exactly as supplied,
  * including any percent-encoding (no decoding or normalization is performed).
  * </p>
+ * <p>
+ * The W3C DID Core specification mandates that the exact percent-encoded string
+ * is passed to DID resolvers. Modifying or decoding the method-specific-id
+ * before resolution can break cryptographic proofs, content hashes, or
+ * method-specific routing that rely on the exact original string.
+ * </p>
  *
  * <h2>Syntax</h2>
  * 
- * <pre>{@code
- * did                = "did" ":" method-name ":" method-specific-id
+ * {@snippet :
+ * did                = "did:" method-name ":" method-specific-id
  * method-name        = 1*method-char
- * method-char        = %x61-7A / DIGIT          ; "a"–"z" or "0"–"9"
+ * method-char        = %x61-7A / DIGIT          ; "a"-"z" or "0"-"9"
  * method-specific-id = *( *idchar ":" ) 1*idchar
  * idchar             = ALPHA / DIGIT / "." / "-" / "_" / pct-encoded
  * pct-encoded        = "%" HEXDIG HEXDIG
- * }</pre>
+ * }
  *
  * <p>
  * <strong>Notes</strong>
@@ -38,10 +45,14 @@ import java.util.function.IntPredicate;
  * <li>Percent-encoded octets ({@code %HH}) are validated for shape only and are
  * not decoded.</li>
  * </ul>
+ * 
+ * @param method           the DID method name (lowercase ASCII).
+ * @param methodSpecificId the raw method-specific-id as provided (may contain
+ *                         pct-encoded octets).
  */
-public class Did implements Serializable {
-
-    private static final long serialVersionUID = -2933853082203788425L;
+public record Did(
+        String method,
+        String methodSpecificId) {
 
     /** DID URI scheme literal: {@code "did"}. */
     public static final String SCHEME = "did";
@@ -72,43 +83,32 @@ public class Did implements Serializable {
             ('A' <= ch && ch <= 'F') ||
             ('a' <= ch && ch <= 'f');
 
-    /** Lowercase method name. */
-    protected final String methodName;
-    /** Raw (pct-encoded) method-specific-id, preserved as provided. */
-    protected final String methodSpecificId;
-
     /**
-     * Creates a DID with already-validated components.
+     * Creates a DID with validated components.
      *
-     * @param methodName       validated method name
+     * @param method           validated method name
      * @param methodSpecificId validated, raw pct-encoded method-specific-id
+     * @throws NullPointerException     if either parameter is null
+     * @throws IllegalArgumentException if components are syntactically invalid
      */
-    protected Did(final String methodName, final String methodSpecificId) {
-        this.methodName = methodName;
-        this.methodSpecificId = methodSpecificId;
+    public Did {
+        Objects.requireNonNull(method, "Method must not be null.");
+        Objects.requireNonNull(methodSpecificId, "Method-specific-id must not be null.");
     }
 
     /**
-     * Tests whether the given {@link URI} is a syntactically valid <em>bare
-     * DID</em>.
-     * <p>
-     * Validation enforces the ABNF in the class Javadoc and additionally requires:
-     * </p>
-     * <ul>
-     * <li>scheme is {@code did} (case-sensitive)</li>
-     * <li>no authority, user-info, host, path, query, or fragment</li>
-     * </ul>
+     * Tests whether the given URI is a syntactically valid bare DID.
      *
      * @param uri candidate URI
-     * @return {@code true} if the URI is a valid DID, otherwise {@code false}
-     * @throws NullPointerException if {@code uri} is {@code null}
+     * @return true if the URI is a valid DID, otherwise false
+     * @throws NullPointerException if uri is null
      */
     public static boolean isDid(final URI uri) {
 
         Objects.requireNonNull(uri);
 
         if (!Did.SCHEME.equals(uri.getScheme())
-                || isBlank(uri.getRawSchemeSpecificPart())
+                || isNullOrBlank(uri.getRawSchemeSpecificPart())
                 || isNotBlank(uri.getAuthority())
                 || isNotBlank(uri.getUserInfo())
                 || isNotBlank(uri.getHost())
@@ -126,11 +126,11 @@ public class Did implements Serializable {
     }
 
     /**
-     * Tests whether the given string is a syntactically valid <em>bare DID</em>.
+     * Tests whether the given string is a syntactically valid bare DID.
      *
-     * @param uri candidate string (e.g., {@code "did:example:123"})
-     * @return {@code true} if valid, otherwise {@code false}
-     * @throws NullPointerException if {@code uri} is {@code null}
+     * @param uri candidate string
+     * @return true if valid, otherwise false
+     * @throws NullPointerException if uri is null
      */
     public static boolean isDid(final String uri) {
 
@@ -146,15 +146,7 @@ public class Did implements Serializable {
     }
 
     /**
-     * @deprecated Use {@link Did#of(URI)}.
-     */
-    @Deprecated
-    public static Did from(final URI uri) {
-        return of(uri);
-    }
-
-    /**
-     * Parses and returns a {@code Did} from the given {@link URI}.
+     * Returns a {@code Did} from the given {@link URI}.
      * <p>
      * The URI must be a bare DID: {@code did:method:method-specific-id}. The
      * method-specific-id is treated as raw pct-encoded data and is <em>not</em>
@@ -166,41 +158,34 @@ public class Did implements Serializable {
      * @throws NullPointerException     if {@code uri} is {@code null}
      * @throws IllegalArgumentException if the URI is not a syntactically valid DID
      */
-    public static Did of(final URI uri) {
+    public static Did from(final URI uri) {
 
         Objects.requireNonNull(uri);
 
         if (!Did.SCHEME.equals(uri.getScheme())) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID; it must start with the 'did:' prefix.");
+            throw new IllegalArgumentException(
+                    "The URI [" + uri + "] is not a valid DID; it must start with the 'did:' prefix.");
         }
 
-        if (isBlank(uri.getRawSchemeSpecificPart())
+        if (isNullOrBlank(uri.getRawSchemeSpecificPart())
                 || isNotBlank(uri.getAuthority())
                 || isNotBlank(uri.getUserInfo())
                 || isNotBlank(uri.getHost())
                 || isNotBlank(uri.getRawPath())
                 || isNotBlank(uri.getRawQuery())
                 || uri.getRawFragment() != null) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID; it must be in the form 'did:method:method-specific-id'.");
+            throw new IllegalArgumentException("The URI [" + uri
+                    + "] is not a valid DID; it must be in the form 'did:method:method-specific-id'.");
         }
 
         final String[] parts = uri.getRawSchemeSpecificPart().split(":", 2);
 
         if (parts.length != 2) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
+            throw new IllegalArgumentException(
+                    "The URI [" + uri + "] is not valid DID, must be in form 'did:method:method-specific-id'.");
         }
 
-        validate(parts[0], parts[1]);
-
         return of(parts[0], parts[1]);
-    }
-
-    /**
-     * @deprecated Use {@link Did#of(String)}.
-     */
-    @Deprecated
-    public static Did from(final String uri) {
-        return of(uri);
     }
 
     /**
@@ -216,7 +201,7 @@ public class Did implements Serializable {
      * @throws IllegalArgumentException if {@code uri} is blank, or not a valid DID
      * @throws NullPointerException     if {@code uri} is {@code null}
      */
-    public static Did of(final String uri) {
+    public static Did parse(final String uri) {
 
         Objects.requireNonNull(uri);
 
@@ -227,14 +212,14 @@ public class Did implements Serializable {
         final String[] parts = uri.split(":", 3);
 
         if (parts.length != 3) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID; it must be in the form 'did:method:method-specific-id'.");
+            throw new IllegalArgumentException("The URI [" + uri
+                    + "] is not a valid DID; it must be in the form 'did:method:method-specific-id'.");
         }
 
         if (!Did.SCHEME.equals(parts[0])) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID; it must start with the 'did:' prefix.");
+            throw new IllegalArgumentException(
+                    "The URI [" + uri + "] is not a valid DID; it must start with the 'did:' prefix.");
         }
-
-        validate(parts[1], parts[2]);
 
         return of(parts[1], parts[2]);
     }
@@ -255,18 +240,22 @@ public class Did implements Serializable {
         Objects.requireNonNull(methodName);
         Objects.requireNonNull(methodSpecificId);
 
+        validate(methodName, methodSpecificId);
+
         return new Did(methodName, methodSpecificId);
     }
 
     public static void validate(final String methodName, final String methodSpecificId) {
         // check method name
         if (!isValidMethodName(methodName)) {
-            throw new IllegalArgumentException("Not a valid DID: method name [" + methodName + "] is blank or invalid.");
+            throw new IllegalArgumentException(
+                    "Not a valid DID: method name [" + methodName + "] is blank or invalid.");
         }
 
         // check method specific id
         if (!isValidMethodSpecificId(methodSpecificId)) {
-            throw new IllegalArgumentException("Not a valid DID: method-specific-id [" + methodSpecificId + "] is blank or invalid.");
+            throw new IllegalArgumentException(
+                    "Not a valid DID: method-specific-id [" + methodSpecificId + "] is blank or invalid.");
         }
     }
 
@@ -339,49 +328,6 @@ public class Did implements Serializable {
     }
 
     /**
-     * Returns the DID method name (lowercase ASCII).
-     *
-     * @return method name
-     */
-    public String getMethod() {
-        return methodName;
-    }
-
-    /**
-     * Returns the raw method-specific-id as provided (may contain pct-encoded
-     * octets).
-     *
-     * @return raw, pct-encoded method-specific-id
-     */
-    public String getMethodSpecificId() {
-        return methodSpecificId;
-    }
-
-    /**
-     * Indicates whether this instance represents a DID URL (always {@code false}
-     * here).
-     * <p>
-     * This class models <em>bare</em> DIDs only. Use {@link #asDidUrl()} in
-     * implementations that support DID URLs.
-     * </p>
-     *
-     * @return {@code false}
-     */
-    public boolean isDidUrl() {
-        return false;
-    }
-
-    /**
-     * Casts this instance to a DID URL.
-     *
-     * @return never returns; this class does not represent DID URLs
-     * @throws ClassCastException always
-     */
-    public DidUrl asDidUrl() {
-        throw new ClassCastException();
-    }
-
-    /**
      * Converts this DID to a {@link URI} by rendering {@link #toString()}.
      *
      * @return a {@code URI} equal to {@code URI.create(toString())}
@@ -400,47 +346,59 @@ public class Did implements Serializable {
      */
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append(SCHEME).append(':')
-                .append(methodName).append(':')
-                .append(methodSpecificId)
-                .toString();
+        return SCHEME + ":" + method + ":" + methodSpecificId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(methodName, methodSpecificId);
-    }
+    /**
+     * Decodes percent-encoded sequences into bytes interpreted as UTF-8.
+     *
+     * @param encoded
+     * @return decoded string
+     */
+    public static String decode(final String encoded) {
+        if (encoded == null || encoded.isEmpty()) {
+            return encoded;
+        }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
+        if (encoded.indexOf('%') == -1) {
+            return encoded;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Did other = (Did) obj;
-        return Objects.equals(methodName, other.methodName) && Objects.equals(methodSpecificId, other.methodSpecificId);
 
+        final int length = encoded.length();
+        final ByteBuffer buffer = ByteBuffer.allocate(length);
+
+        for (int i = 0; i < length;) {
+            final char c = encoded.charAt(i);
+
+            if (c == '%') {
+                final int high = Character.digit(encoded.charAt(i + 1), 16);
+                final int low = Character.digit(encoded.charAt(i + 2), 16);
+                buffer.put((byte) ((high << 4) | low));
+                i += 3;
+
+            } else {
+                buffer.put((byte) c);
+                i++;
+            }
+        }
+
+        buffer.flip();
+        return StandardCharsets.UTF_8.decode(buffer).toString();
     }
 
     /**
      * @return {@code true} if the value is non-null and not blank after
      *         {@code trim()}
      */
-    static final boolean isNotBlank(String value) {
-        return value != null && !value.trim().isEmpty();
+    private static final boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
     }
 
     /**
      * @return {@code true} if the value is {@code null} or blank after
      *         {@code trim()}
      */
-    static final boolean isBlank(String value) {
-        return value == null || value.trim().isEmpty();
+    private static final boolean isNullOrBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

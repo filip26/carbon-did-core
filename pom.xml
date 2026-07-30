@@ -7,20 +7,23 @@
     <groupId>com.apicatalog</groupId>
     <artifactId>carbon-did</artifactId>
 
-	<version>0.9.2</version>
-	<packaging>jar</packaging>
+    <version>0.10.0</version>
+    <packaging>jar</packaging>
 
-	<url>https://github.com/filip26/carbon-did-core</url>
-	<scm>
-		<connection>scm:git:git://github.com/filip26/carbon-did-core.git</connection>
-		<developerConnection>scm:git:git://github.com/filip26/carbon-did-core.git</developerConnection>
-		<url>https://github.com/filip26/carbon-did-core/tree/main</url>
-	</scm>
+    <url>https://github.com/filip26/carbon-did-core</url>
+    <scm>
+        <connection>scm:git:git://github.com/filip26/carbon-did-core.git</connection>
+        <developerConnection>
+            scm:git:git://github.com/filip26/carbon-did-core.git</developerConnection>
+        <url>https://github.com/filip26/carbon-did-core/tree/main</url>
+    </scm>
 
     <name>Carbon DID Core</name>
 
     <description>
-        Core library for Decentralized Identifiers (DIDs) in Java. Provides DID and DID URL primitives, and interfaces for DID Documents and DID Resolvers.
+        Core library for Decentralized Identifiers (DIDs) in Java. Provides DID
+        and DID URL primitives, and interfaces for DID Documents and DID
+        Resolvers.
     </description>
 
     <licenses>
@@ -31,10 +34,10 @@
     </licenses>
 
 
-	<issueManagement>
-		<system>github</system>
-		<url>https://github.com/filip26/carbon-did-core/issues</url>
-	</issueManagement>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/filip26/carbon-did-core/issues</url>
+    </issueManagement>
 
     <developers>
         <developer>
@@ -50,18 +53,44 @@
     <inceptionYear>2022</inceptionYear>
 
     <properties>
+        <maven.compiler.release>25</maven.compiler.release>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <argLine>-Dfile.encoding=UTF-8</argLine>
 
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-
         <!-- test resources -->
-        <junit.version>5.14.4</junit.version>
+        <copper.multicodec.version>4.0.0</copper.multicodec.version>
+        <copper.multibase.version>4.1.0</copper.multibase.version>
+        <tree-io.version>1.0.0-M2</tree-io.version>
+        <junit.version>6.1.0</junit.version>
     </properties>
     <dependencies>
         <!-- Tests -->
+        <dependency>
+            <groupId>com.apicatalog</groupId>
+            <artifactId>copper-multibase</artifactId>
+            <version>${copper.multibase.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.apicatalog</groupId>
+            <artifactId>copper-multicodec</artifactId>
+            <version>${copper.multicodec.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.apicatalog</groupId>
+            <artifactId>tree-io-api</artifactId>
+            <version>${tree-io.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.apicatalog</groupId>
+            <artifactId>tree-io-jackson2</artifactId>
+            <version>${tree-io.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -157,7 +186,7 @@
                             </execution>
                         </executions>
                     </plugin>
-					<plugin>
+                    <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <version>0.11.0</version>

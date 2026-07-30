@@ -1,6 +1,9 @@
 package com.apicatalog.did;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -11,51 +14,42 @@ import java.util.Objects;
  * {@code fragment} components. Values are preserved exactly as supplied,
  * including any percent-encoding (no decoding).
  * </p>
+ * <p>
+ * The W3C DID Core specification mandates that the exact percent-encoded string
+ * is passed to DID resolvers. Modifying or decoding the method-specific-id
+ * before resolution can break cryptographic proofs, content hashes, or
+ * method-specific routing that rely on the exact original string.
+ * </p>
  *
- * <b>Form</b>
+ * <h2>Form</h2>
+ * <p>
+ * {@code
+ * did-url            = did path-abempty [ "?" query ] [ "#" fragment ]
+ * }
+ * </p>
  * 
- * <pre>{@code
- * did:<method>:<method-specific-id>[<path>][?<query>][#<fragment>]
- * }</pre>
+ * @param method           the DID method name (lowercase ASCII).
+ * @param methodSpecificId the raw method-specific-id as provided (may contain
+ *                         pct-encoded octets).
+ * @param path             the path (percent-encoded if applicable). When
+ *                         present it starts with {@code '/'}.
+ * @param query            the query parameters (percent-encoded if applicable).
+ * @param fragment         the fragment (percent-encoded if applicable), without
+ *                         a leading {@code '#'}.
  */
-public class DidUrl extends Did {
-
-    private static final long serialVersionUID = -4371252270461483928L;
-
-    /** Path (percent-encoded if applicable). {@code null} if absent. */
-    protected final String path;
-    /**
-     * Query (percent-encoded, without leading {@code '?'}). {@code null} if absent.
-     */
-    protected final String query;
-    /**
-     * Fragment (percent-encoded, without leading {@code '#'}). {@code null} if
-     * absent.
-     */
-    protected final String fragment;
-
-    /**
-     * Constructs a DID URL from validated DID parts.
-     *
-     * @param methodName       lowercase method name ({@code [a-z0-9]+})
-     * @param methodSpecificId method-specific-id (percent-encoded as needed)
-     * @param path             optional path (may be {@code null})
-     * @param query            optional query (may be {@code null})
-     * @param fragment         optional fragment (may be {@code null})
-     */
-    protected DidUrl(String methodName, String methodSpecificId, String path, String query, String fragment) {
-        super(methodName, methodSpecificId);
-        this.path = path;
-        this.query = query;
-        this.fragment = fragment;
-    }
+public record DidUrl(
+        String method,
+        String methodSpecificId,
+        String path,
+        Collection<QueryParameter> query,
+        String fragment) {
 
     /**
      * Creates a DID URL from separated parts. Values are preserved; only minimal
      * normalization of leading {@code /}, {@code ?}, and {@code #} markers is
      * applied.
      *
-     * @param methodName       lowercase method name
+     * @param method           lowercase method name
      * @param methodSpecificId method-specific-id (percent-encoded as needed)
      * @param path             optional path (leading {@code '/'} added if missing;
      *                         {@code null} unchanged)
@@ -63,20 +57,28 @@ public class DidUrl extends Did {
      *                         present; {@code null} unchanged)
      * @param fragment         optional fragment (leading {@code '#'} removed if
      *                         present; {@code null} unchanged)
-     * @return a new {@code DidUrl}
      */
-    public static DidUrl of(
-            final String methodName,
-            final String methodSpecificId,
-            final String path,
-            final String query,
-            final String fragment) {
-        return new DidUrl(
-                methodName,
-                methodSpecificId,
-                normalizePath(path),
-                normalizeQuery(query),
-                normalizeFragment(fragment));
+    public DidUrl {
+        Objects.requireNonNull(method, "Method must not be null.");
+        Objects.requireNonNull(methodSpecificId, "Method-specific-id must not be null.");
+
+        path = normalizePath(path);
+        fragment = normalizeFragment(fragment);
+    }
+
+    /**
+     * Creates a DID URL from a base {@link Did} with only a fragment component.
+     * Percent-encoding is preserved.
+     *
+     * @param did      base DID (must not be {@code null})
+     * @param fragment fragment (may be empty; leading {@code '#'} is removed if
+     *                 present)
+     * @return a new {@code DidUrl}
+     * @throws NullPointerException if {@code fragment} is {@code null}
+     */
+    public static DidUrl of(final Did did, final String fragment) {
+        Objects.requireNonNull(fragment);
+        return of(did, null, (Collection<QueryParameter>) null, fragment);
     }
 
     /**
@@ -84,19 +86,36 @@ public class DidUrl extends Did {
      * fragment. Percent-encoding is preserved.
      *
      * @param did      base DID (must not be {@code null})
-     * @param path     optional path (see {@link #normalizePath(String)})
-     * @param query    optional query (see {@link #normalizeQuery(String)})
-     * @param fragment optional fragment (see {@link #normalizeFragment(String)})
+     * @param path     optional path
+     * @param query    optional query
+     * @param fragment optional fragment
      * @return a new {@code DidUrl}
      * @throws NullPointerException if {@code did} is {@code null}
      */
     public static DidUrl of(final Did did, final String path, final String query, final String fragment) {
         Objects.requireNonNull(did);
+        return of(did, path, parseQueryParameters(query), fragment);
+    }
+
+    /**
+     * Creates a DID URL from a base {@link Did} and optional path, query, and
+     * fragment. Percent-encoding is preserved.
+     *
+     * @param did      base DID (must not be {@code null})
+     * @param path     optional path
+     * @param query    optional query
+     * @param fragment optional fragment
+     * @return a new {@code DidUrl}
+     * @throws NullPointerException if {@code did} is {@code null}
+     */
+    public static DidUrl of(final Did did, final String path, final Collection<QueryParameter> query,
+            final String fragment) {
+        Objects.requireNonNull(did);
         return new DidUrl(
-                did.methodName,
-                did.methodSpecificId,
+                did.method(),
+                did.methodSpecificId(),
                 normalizePath(path),
-                normalizeQuery(query),
+                query,
                 normalizeFragment(fragment));
     }
 
@@ -108,30 +127,33 @@ public class DidUrl extends Did {
      * @throws NullPointerException     if {@code uri} is {@code null}
      * @throws IllegalArgumentException if the URI is not a valid DID URL
      */
-    public static DidUrl of(final URI uri) {
+    public static DidUrl from(final URI uri) {
 
         Objects.requireNonNull(uri);
 
-        if (!SCHEME.equalsIgnoreCase(uri.getScheme())) {
+        if (!Did.SCHEME.equalsIgnoreCase(uri.getScheme())) {
             throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; must start with 'did:'.");
         }
 
         if (isNotBlank(uri.getAuthority())
                 || isNotBlank(uri.getUserInfo())
                 || isNotBlank(uri.getHost())) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; authority is not allowed.");
+            throw new IllegalArgumentException(
+                    "The URI [" + uri + "] is not a valid DID URL; authority is not allowed.");
         }
 
         final String ssp = uri.getRawSchemeSpecificPart();
 
-        if (isBlank(ssp)) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; expected 'did:method:method-specific-id'.");
+        if (isNullOrBlank(ssp)) {
+            throw new IllegalArgumentException(
+                    "The URI [" + uri + "] is not a valid DID URL; expected 'did:method:method-specific-id'.");
         }
 
         final String[] parts = ssp.split(":", 2);
 
         if (parts.length != 2) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; expected 'did:method:method-specific-id'.");
+            throw new IllegalArgumentException(
+                    "The URI [" + uri + "] is not a valid DID URL; expected 'did:method:method-specific-id'.");
         }
 
         return of(
@@ -149,11 +171,11 @@ public class DidUrl extends Did {
      * @throws NullPointerException     if {@code uri} is {@code null}
      * @throws IllegalArgumentException if blank or not a DID URL
      */
-    public static DidUrl of(final String uri) {
+    public static DidUrl parse(final String uri) {
 
         Objects.requireNonNull(uri);
 
-        if (uri.isEmpty()) {
+        if (uri.isBlank()) {
             throw new IllegalArgumentException("DID URL string must not be blank.");
         }
 
@@ -164,7 +186,8 @@ public class DidUrl extends Did {
         }
 
         if (!Did.SCHEME.equals(parts[0])) {
-            throw new IllegalArgumentException("The URI [" + uri + "] is not a valid DID URL; it must start with the 'did:' prefix.");
+            throw new IllegalArgumentException(
+                    "The URI [" + uri + "] is not a valid DID URL; it must start with the 'did:' prefix.");
         }
 
         String ssp = parts[2];
@@ -181,39 +204,6 @@ public class DidUrl extends Did {
     }
 
     /**
-     * Creates a DID URL from a base {@link Did} with only a fragment component.
-     * Percent-encoding is preserved.
-     *
-     * @param did      base DID (must not be {@code null})
-     * @param fragment fragment (may be empty; leading {@code '#'} is removed if
-     *                 present)
-     * @return a new {@code DidUrl}
-     * @throws NullPointerException if {@code fragment} is {@code null}
-     */
-    public static DidUrl fragment(final Did did, final String fragment) {
-        Objects.requireNonNull(fragment);
-        return of(did, null, null, fragment);
-    }
-
-    /** @deprecated use {@link DidUrl#of(String)} */
-    @Deprecated
-    public static DidUrl from(final String uri) {
-        return of(uri);
-    }
-
-    /** @deprecated use {@link DidUrl#of(Did, String, String, String)} */
-    @Deprecated
-    public static DidUrl from(Did did, String path, String query, String fragment) {
-        return of(did, path, query, fragment);
-    }
-
-    /** @deprecated use {@link DidUrl#of(URI)} */
-    @Deprecated
-    public static DidUrl from(final URI uri) {
-        return of(uri);
-    }
-
-    /**
      * Returns whether the given {@link URI} is a syntactically valid DID URL.
      * Validation checks scheme, absence of authority/host, and that the method and
      * method-specific-id are valid per {@link Did}.
@@ -223,8 +213,8 @@ public class DidUrl extends Did {
      */
     public static boolean isDidUrl(final URI uri) {
         if (uri == null
-                || !SCHEME.equals(uri.getScheme())
-                || isBlank(uri.getRawSchemeSpecificPart())
+                || !Did.SCHEME.equals(uri.getScheme())
+                || isNullOrBlank(uri.getRawSchemeSpecificPart())
                 || isNotBlank(uri.getRawAuthority())
                 || isNotBlank(uri.getRawUserInfo())
                 || isNotBlank(uri.getHost())) {
@@ -237,7 +227,7 @@ public class DidUrl extends Did {
             return false;
         }
 
-        if (!isValidMethodName(parts[0])) {
+        if (!Did.isValidMethodName(parts[0])) {
             return false;
         }
 
@@ -247,7 +237,7 @@ public class DidUrl extends Did {
             return false;
         }
 
-        return isValidMethodSpecificId(parts[1].substring(0, msiEndIndex));
+        return Did.isValidMethodSpecificId(parts[1].substring(0, msiEndIndex));
     }
 
     /**
@@ -272,30 +262,9 @@ public class DidUrl extends Did {
      *
      * @return a {@code URI} equal to {@code URI.create(toString())}
      */
-    @Override
     public URI toUri() {
         // Preserve exact raw form produced by toString()
         return URI.create(toString());
-    }
-
-    /**
-     * Indicates that this instance represents a DID URL.
-     *
-     * @return always {@code true}
-     */
-    @Override
-    public boolean isDidUrl() {
-        return true;
-    }
-
-    /**
-     * Returns this instance as a {@link DidUrl}.
-     *
-     * @return {@code this}
-     */
-    @Override
-    public DidUrl asDidUrl() {
-        return this;
     }
 
     /**
@@ -305,7 +274,7 @@ public class DidUrl extends Did {
      * @return a new {@code Did}
      */
     public Did toDid() {
-        return new Did(super.methodName, super.methodSpecificId);
+        return new Did(method, methodSpecificId);
     }
 
     /**
@@ -318,11 +287,15 @@ public class DidUrl extends Did {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder()
-                .append(SCHEME).append(':')
-                .append(methodName).append(':')
+                .append(Did.SCHEME).append(':')
+                .append(method).append(':')
                 .append(methodSpecificId);
 
-        appendPathAndQuery(builder);
+        appendPath(builder);
+        if (query != null) {
+            builder.append('?');
+            appendQueryParams(builder);
+        }
 
         if (fragment != null) {
             builder.append('#');
@@ -334,84 +307,55 @@ public class DidUrl extends Did {
         return builder.toString();
     }
 
+    public String queryToString() {
+        return query != null
+                ? appendQueryParams(new StringBuilder()).toString()
+                : null;
+    }
+
     /**
-     * Appends the path and query to the provided builder. Path is ensured to start
-     * with {@code '/'} when present; query is appended after {@code '?'} even if
-     * empty.
+     * Appends the path to the provided builder. Path is ensured to start with
+     * {@code '/'} when present.
      *
      * @param builder target builder
      * @return the same {@code builder}
      */
-    protected StringBuilder appendPathAndQuery(final StringBuilder builder) {
+    private StringBuilder appendPath(final StringBuilder builder) {
         if (path != null) {
             if (path.isEmpty() || path.charAt(0) != '/') {
                 builder.append('/');
-            } else if (!path.isEmpty()) {
+            } else {
                 builder.append(path);
-            }
-        }
-
-        if (query != null) {
-            builder.append('?');
-            if (!query.isEmpty()) {
-                builder.append(query);
             }
         }
         return builder;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + Objects.hash(fragment, path, query);
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DidUrl other = (DidUrl) obj;
-        return Objects.equals(fragment, other.fragment) && Objects.equals(path, other.path)
-                && Objects.equals(query, other.query);
-    }
-
     /**
-     * Returns the fragment (percent-encoded if applicable), without a leading
-     * {@code '#'}.
+     * Appends the query to the provided builder. Query is appended after
+     * {@code '?'} even if empty.
      *
-     * @return fragment or {@code null} if absent
+     * @param builder target builder
+     * @return the same {@code builder}
      */
-    public String getFragment() {
-        return fragment;
-    }
+    private StringBuilder appendQueryParams(final StringBuilder builder) {
+        boolean next = false;
+        for (var entry : query) {
+            if (next) {
+                builder.append('&');
 
-    /**
-     * Returns the path (percent-encoded if applicable). When present it starts with
-     * {@code '/'}.
-     *
-     * @return path or {@code null} if absent
-     */
-    public String getPath() {
-        return path;
-    }
+            } else {
+                next = true;
+            }
 
-    /**
-     * Returns the query (percent-encoded if applicable), without a leading
-     * {@code '?'}.
-     *
-     * @return query or {@code null} if absent
-     */
-    public String getQuery() {
-        return query;
+            builder.append(entry.key);
+
+            if (entry.value != null) {
+                builder.append('=');
+                builder.append(entry.value);
+            }
+        }
+        return builder;
     }
 
     /**
@@ -421,7 +365,7 @@ public class DidUrl extends Did {
      * @param p input path (may be {@code null})
      * @return normalized path, empty string, or {@code null}
      */
-    static final String normalizePath(final String p) {
+    private static final String normalizePath(final String p) {
         if (p == null) {
             return null;
         }
@@ -432,25 +376,12 @@ public class DidUrl extends Did {
     }
 
     /**
-     * Removes a leading {@code '?'} from a query if present.
-     *
-     * @param q input query (may be {@code null})
-     * @return query without leading {@code '?'}, or {@code null}
-     */
-    static final String normalizeQuery(final String q) {
-        if (q == null) {
-            return null;
-        }
-        return (q.startsWith("?")) ? q.substring(1) : q;
-    }
-
-    /**
      * Removes a leading {@code '#'} from a fragment if present.
      *
      * @param f input fragment (may be {@code null})
      * @return fragment without leading {@code '#'}, or {@code null}
      */
-    static final String normalizeFragment(final String f) {
+    private static final String normalizeFragment(final String f) {
         if (f == null) {
             return null;
         }
@@ -465,7 +396,7 @@ public class DidUrl extends Did {
      * @param ssp scheme-specific part (must not be {@code null})
      * @return end index of the method-specific-id
      */
-    static final int methodSpecificIdEndIndex(String ssp) {
+    private static final int methodSpecificIdEndIndex(String ssp) {
         int msiEndIndex = ssp.length();
         final int slashIndex = ssp.indexOf('/');
         final int qmarkIndex = ssp.indexOf('?');
@@ -492,7 +423,8 @@ public class DidUrl extends Did {
      * @throws IllegalArgumentException if method-specific-id is empty or the tail
      *                                  is malformed
      */
-    static DidUrl of(final String methodName,
+    private static DidUrl of(
+            final String methodName,
             final String ssp,
             final String fragment) {
 
@@ -505,13 +437,13 @@ public class DidUrl extends Did {
 
         final String methodSpecificId = ssp.substring(0, msiEndIndex);
 
-        validate(methodName, methodSpecificId);
-
-        final String rest = ssp.substring(msiEndIndex); // starts with '/' or '?' or is empty
+        Did.validate(methodName, methodSpecificId);
 
         // Extract path and query from tail (both raw, without leading markers)
         String path = null;
         String query = null;
+
+        final String rest = ssp.substring(msiEndIndex); // starts with '/' or '?' or is empty
 
         if (!rest.isEmpty()) {
             if (rest.charAt(0) == '/') {
@@ -521,13 +453,16 @@ public class DidUrl extends Did {
                     path = rest; // includes leading '/'
                 } else {
                     path = rest.substring(0, queryIndex); // includes leading '/'
-                    query = rest.substring(queryIndex + 1); // without '?'
+                    query = rest.substring(queryIndex);
                 }
+
             } else if (rest.charAt(0) == '?') {
-                query = rest.substring(1); // empty query allowed
+                query = rest; // empty query allowed
+
             } else {
                 // Should not happen (we only cut at '/' or '?')
-                throw new IllegalArgumentException("The URI is not a valid DID URL; malformed path/query [" + rest + "].");
+                throw new IllegalArgumentException(
+                        "The URI is not a valid DID URL; malformed path/query [" + rest + "].");
             }
         }
 
@@ -535,7 +470,84 @@ public class DidUrl extends Did {
                 methodName,
                 methodSpecificId,
                 path,
-                query,
+                query != null ? parseQueryParameters(query) : null,
                 fragment);
     }
+
+    private static Collection<QueryParameter> parseQueryParameters(String queryString) {
+        if (queryString == null) {
+            return null;
+        }
+
+        if (queryString.isEmpty()) {
+            return List.of();
+        }
+
+        int length = queryString.length();
+        var queries = new ArrayList<QueryParameter>();
+
+        var startIndex = queryString.charAt(0) == '?' ? 1 : 0;
+        int keyIndex = startIndex;
+        int valueIndex = -1;
+
+        for (int i = startIndex; i <= length; i++) {
+            char c = i == length ? '&' : queryString.charAt(i);
+
+            if (c == '=' && valueIndex == -1) {
+                valueIndex = i + 1;
+
+            } else if (c == '&') {
+
+                if (i > keyIndex) {
+                    if (valueIndex == -1) {
+                        queries.add(new QueryParameter(queryString.substring(keyIndex, i), null));
+
+                    } else {
+                        queries.add(
+                                new QueryParameter(
+                                        queryString.substring(keyIndex, valueIndex - 1),
+                                        queryString.substring(valueIndex, i)));
+                    }
+
+                } else if (i == keyIndex) {
+                    queries.add(new QueryParameter("", null));
+                }
+
+                keyIndex = i + 1;
+                valueIndex = -1;
+            }
+        }
+
+        return List.copyOf(queries);
+    }
+
+    /**
+     * @return {@code true} if the value is non-null and not blank after
+     *         {@code trim()}
+     */
+    private static final boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
+    }
+
+    /**
+     * @return {@code true} if the value is {@code null} or blank after
+     *         {@code trim()}
+     */
+    private static final boolean isNullOrBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    public static record QueryParameter(String key, String value) {
+
+        public QueryParameter {
+            Objects.requireNonNull(key);
+        }
+
+        @Override
+        public final String toString() {
+            return value == null
+                    ? key
+                    : key + "=" + value;
+        }
+    };
 }

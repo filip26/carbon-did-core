@@ -3,7 +3,7 @@ package com.apicatalog.did.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.apicatalog.did.document.DidDocument;
+import com.apicatalog.did.DidDocument;
 
 /**
  * Reader for parsing a {@link DidDocument} from an {@link InputStream}.
@@ -26,8 +26,7 @@ public interface DidDocumentReader {
      *
      * @param is input stream (must not be {@code null})
      * @return parsed {@code DidDocument}
-     * @throws IOException                if a low-level I/O error occurs
-     * @throws DidDocumentReaderException if parsing or validation fails
+     * @throws IOException if a low-level I/O error occurs
      */
-    DidDocument read(InputStream is) throws IOException, DidDocumentReaderException;
+    DidDocument read(InputStream is) throws IOException;
 }
