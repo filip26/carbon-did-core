@@ -60,10 +60,37 @@
         <argLine>-Dfile.encoding=UTF-8</argLine>
 
         <!-- test resources -->
+        <copper.multicodec.version>4.0.0</copper.multicodec.version>
+        <copper.multibase.version>4.1.0</copper.multibase.version>
+        <tree-io.version>1.0.0-M2</tree-io.version>
         <junit.version>6.1.0</junit.version>
     </properties>
     <dependencies>
         <!-- Tests -->
+        <dependency>
+            <groupId>com.apicatalog</groupId>
+            <artifactId>copper-multibase</artifactId>
+            <version>${copper.multibase.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.apicatalog</groupId>
+            <artifactId>copper-multicodec</artifactId>
+            <version>${copper.multicodec.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.apicatalog</groupId>
+            <artifactId>tree-io-api</artifactId>
+            <version>${tree-io.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.apicatalog</groupId>
+            <artifactId>tree-io-jackson2</artifactId>
+            <version>${tree-io.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

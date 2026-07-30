@@ -1,6 +1,5 @@
 package com.apicatalog.did.service;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,11 +35,11 @@ public interface Service {
     String id();
 
     /**
-     * The {@code type} values of this service.
+     * The {@code type} value of this service.
      *
      * @return one or more type strings
      */
-    Collection<String> type();
+    String type();
 
     /**
      * Determines if the service has at least one endpoint.

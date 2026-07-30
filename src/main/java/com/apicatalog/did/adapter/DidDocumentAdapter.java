@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.apicatalog.did.Did;
@@ -42,7 +43,10 @@ public final class DidDocumentAdapter {
     }
 
     public DidDocument readDocument(Did did, Map<String, Object> document) {
-
+        
+        Objects.requireNonNull(did);
+        Objects.requireNonNull(document);
+        
         var context = getContexts(document);
 
         if (!isAccepted.test(context)) {

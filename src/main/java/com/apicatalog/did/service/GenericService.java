@@ -12,13 +12,13 @@ import java.util.Objects;
  * </p>
  * 
  * @param id        the service identifier (optional)
- * @param type      a collection of types defining the service
+ * @param type      a type defining the service
  * @param endpoints a collection of service endpoints; values may be strings or
  *                  maps
  */
 public record GenericService(
         String id,
-        Collection<String> type,
+        String type,
         Collection<Object> endpoints) implements Service {
 
     /**

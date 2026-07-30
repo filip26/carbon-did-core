@@ -16,6 +16,10 @@ class MapEntryAdapter {
         if (entry.getValue() instanceof String value) {
             return value;
         }
+        if (entry.getValue() instanceof Collection<?> col && col.size() == 1
+                && col.iterator().next() instanceof String value) {
+            return value;
+        }
         throw new IllegalArgumentException(
                 "Property '" + entry.getKey() + "' must be a string.");
     }
@@ -75,7 +79,7 @@ class MapEntryAdapter {
         if (entry.getValue() == null) {
             return List.of();
         }
-        
+
         if (entry.getValue() instanceof String value) {
             return List.of(value);
         }

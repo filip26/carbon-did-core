@@ -6,8 +6,9 @@ import java.util.Map;
 
 import com.apicatalog.did.DidVocab;
 import com.apicatalog.did.service.GenericService;
+import com.apicatalog.did.service.Service;
 
-public class GenericServiceAdapter {
+public class GenericServiceAdapter implements DidDocumentAdapter.ServiceAdapter {
 
     /**
      * Creates a {@link GenericService} from a compacted object.
@@ -17,10 +18,11 @@ public class GenericServiceAdapter {
      * @throws IllegalArgumentException if an unsupported property or invalid value
      *                                  is encountered
      */
-    public static GenericService from(Map<String, Object> document) {
+    @Override
+    public Service readService(Collection<String> context, Map<String, Object> document) {
 
         String id = null;
-        Collection<String> type = null;
+        String type = null;
         Collection<Object> endpoints = List.of();
 
         for (var entry : document.entrySet()) {
@@ -31,38 +33,13 @@ public class GenericServiceAdapter {
 
             switch (entry.getKey()) {
             case DidVocab.KEY_ID -> id = MapEntryAdapter.url(entry);
-            case DidVocab.KEY_TYPE -> type = MapEntryAdapter.stringCollection(entry);
+            case DidVocab.KEY_TYPE -> type = MapEntryAdapter.string(entry);
             case DidVocab.KEY_SERVICE_ENDPOINT -> endpoints = MapEntryAdapter.toCollection(entry);
 
             default -> throw new IllegalArgumentException(
                     "Unsupported property: " + entry.getKey());
             }
         }
-        return new GenericService(id, List.copyOf(type), List.copyOf(endpoints));
+        return new GenericService(id, type, List.copyOf(endpoints));
     }
-
-//    /**
-//     * Creates a {@code DidService} with a single type and multiple endpoints.
-//     *
-//     * @param id       service id
-//     * @param type     service type
-//     * @param endpoint service endpoints
-//     * @return a new {@code DidService}
-//     */
-//    static DidService of(String id, String type, Collection<DidServiceEndpoint> endpoint) {
-//        return new GenericService(id, List.of(type), endpoint);
-//    }
-//
-//    /**
-//     * Creates a {@code DidService} with single type and endpoint.
-//     *
-//     * @param id       service id
-//     * @param type     service types
-//     * @param endpoint service endpoint
-//     * @return a new {@code DidService}
-//     */
-//    static DidService of(URI id, String type, DidServiceEndpoint endpoint) {
-//        return new GenericService(id, List.of(type), List.of(endpoint));
-//    }
-
 }
