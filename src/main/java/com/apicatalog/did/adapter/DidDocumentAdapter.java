@@ -96,7 +96,7 @@ public final class DidDocumentAdapter {
                         }
 
                         if (!methodAdapter.getKey().test(context)) {
-                            throw new IllegalArgumentException();
+                            throw new IllegalArgumentException("The context " + context + " does not support the method type " + methodType);
                         }
 
                         if (mapValue.get(DidVocab.KEY_ID) instanceof String idValue && idValue.startsWith("#")) {
@@ -140,7 +140,7 @@ public final class DidDocumentAdapter {
 
                             if (serviceAdapter == null) {
                                 throw new IllegalArgumentException(
-                                        "No adapter is configured for type '" + serviceType + "'.");
+                                        "No adapter is configured for service type '" + serviceType + "'.");
                             }
 
                             if (!serviceAdapter.getKey().test(context)) {

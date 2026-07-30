@@ -61,7 +61,7 @@ public class MultiKeyAdapter implements DidDocumentAdapter.MethodAdapter {
             switch (entry.getKey()) {
             case DidVocab.KEY_ID -> id = MapEntryAdapter.didUrl(entry);
             case DidVocab.KEY_TYPE -> {
-                if (!MultiKey.TYPE_NAME.equals(entry.getValue())) {
+                if (!typeName.equals(entry.getValue())) {
                     throw new IllegalArgumentException(
                             "Expected type '" + MultiKey.TYPE_NAME + "' but found '" + entry.getValue() + '\'');
                 }
