@@ -2,10 +2,6 @@ package com.apicatalog.did;
 
 public final class DidVocab {
 
-    private DidVocab() {
-        // no instance allowed, just container
-    }
-    
     public static final String NS_SECURITY = "https://w3id.org/security#";
     public static final String NS_ACTIVITYSTREAMS = "https://www.w3.org/ns/activitystreams#";
     public static final String NS_DID = "https://www.w3.org/ns/did#";
@@ -33,5 +29,9 @@ public final class DidVocab {
 
     public static final String KEY_PUBLIC_KEY_JWK = "publicKeyJwk";
     public static final String KEY_SECRET_KEY_JWK = "secretKeyJwk";
+
+    private DidVocab() {
+        // no instance allowed, just container
+    }
 
 }
