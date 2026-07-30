@@ -36,7 +36,7 @@ public class JsonWebKeyAdapter implements DidDocumentAdapter.MethodAdapter {
      * @throws IllegalArgumentException if the input contains invalid or unsupported
      *                                  properties
      */
-    public JsonWebKey readMethod(Collection<String> context, Map<String, Object> compacted) {
+    public JsonWebKey mapMethod(Collection<String> context, Map<String, Object> compacted) {
 
         DidUrl id = null;
         Did controller = null;

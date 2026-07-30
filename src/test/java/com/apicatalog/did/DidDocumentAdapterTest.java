@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.apicatalog.did.adapter.DidDocumentAdapter;
+import com.apicatalog.did.adapter.GenericServiceAdapter;
 import com.apicatalog.did.adapter.JsonWebKeyAdapter;
 import com.apicatalog.did.adapter.MultiKeyAdapter;
 import com.apicatalog.did.method.JsonWebKey;
@@ -29,25 +30,31 @@ public class DidDocumentAdapterTest {
     static DidDocumentAdapter ADAPTER = DidDocumentAdapter.newBuilder()
             .context(ctx -> ctx.contains("https://www.w3.org/ns/did/v1")
                     || ctx.contains("https://www.w3.org/ns/did/v1.1rc1"))
+
             .method(MultiKey.TYPE_NAME,
                     ctx -> ctx.contains("https://www.w3.org/ns/did/v1.1rc1")
                             || ctx.contains("https://w3id.org/security/multikey/v1"),
                     new MultiKeyAdapter(MultibaseDecoder.getInstance()::decode))
+
             .method("Ed25519VerificationKey2020",
                     ctx -> ctx.contains("https://w3id.org/security/suites/ed25519-2020/v1"),
                     new MultiKeyAdapter(
                             "Ed25519VerificationKey2020",
                             Multibase.BASE_58_BTC::decode,
                             KeyCodec.ED25519_PUBLIC::isEncoded))
+
             .method(JsonWebKey.TYPE_NAME,
                     ctx -> ctx.contains("https://www.w3.org/ns/did/v1.1rc1")
                             || ctx.contains("https://w3id.org/security/jwk/v1"),
                     new JsonWebKeyAdapter())
+
             .method("JsonWebKey2020",
                     ctx -> ctx.contains("https://w3id.org/security/suites/jws-2020/v1"),
                     new JsonWebKeyAdapter("JsonWebKey2020"))
+
+            .genericServiceAdapter()
+
             .build();
-//    Map.of(/*TODO service adapters */))::readDocument,
 
     @ParameterizedTest(name = "{0}")
     @MethodSource({ "vectors" })
@@ -55,7 +62,7 @@ public class DidDocumentAdapterTest {
 
         var did = Did.parse(uri);
 
-        var doc = ADAPTER.readDocument(did, read(DidDocumentAdapterTest.class.getResourceAsStream(resource)));
+        var doc = ADAPTER.mapDocument(did, read(DidDocumentAdapterTest.class.getResourceAsStream(resource)));
         assertNotNull(doc);
     }
 

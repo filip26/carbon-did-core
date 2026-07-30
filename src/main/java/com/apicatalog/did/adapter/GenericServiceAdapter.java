@@ -19,7 +19,7 @@ public class GenericServiceAdapter implements DidDocumentAdapter.ServiceAdapter 
      *                                  is encountered
      */
     @Override
-    public Service readService(Collection<String> context, Map<String, Object> document) {
+    public Service mapService(Collection<String> context, Map<String, Object> document) {
 
         String id = null;
         String type = null;

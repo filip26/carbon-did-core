@@ -20,13 +20,15 @@ public final class DidDocumentAdapter {
 
     @FunctionalInterface
     public interface MethodAdapter {
-        VerificationMethod readMethod(Collection<String> context, Map<String, Object> method);
+        VerificationMethod mapMethod(Collection<String> context, Map<String, Object> method);
     }
 
     @FunctionalInterface
     public interface ServiceAdapter {
-        Service readService(Collection<String> context, Map<String, Object> method);
+        Service mapService(Collection<String> context, Map<String, Object> method);
     }
+
+    public static final String ANY_SERVICE_TYPE = "*";
 
     private final Predicate<Collection<String>> isAccepted;
 
@@ -42,11 +44,11 @@ public final class DidDocumentAdapter {
         this.serviceAdapters = serviceAdapters;
     }
 
-    public DidDocument readDocument(Did did, Map<String, Object> document) {
-        
+    public DidDocument mapDocument(Did did, Map<String, Object> document) {
+
         Objects.requireNonNull(did);
         Objects.requireNonNull(document);
-        
+
         var context = getContexts(document);
 
         if (!isAccepted.test(context)) {
@@ -96,7 +98,8 @@ public final class DidDocumentAdapter {
                         }
 
                         if (!methodAdapter.getKey().test(context)) {
-                            throw new IllegalArgumentException("The context " + context + " does not support the method type " + methodType);
+                            throw new IllegalArgumentException(
+                                    "The context " + context + " does not support the method type " + methodType);
                         }
 
                         if (mapValue.get(DidVocab.KEY_ID) instanceof String idValue && idValue.startsWith("#")) {
@@ -105,10 +108,10 @@ public final class DidDocumentAdapter {
                             mapClone.putAll(mapValue);
                             mapClone.put(DidVocab.KEY_ID, did.toString() + idValue);
 
-                            builder.method(rel, methodAdapter.getValue().readMethod(context, mapClone));
+                            builder.method(rel, methodAdapter.getValue().mapMethod(context, mapClone));
 
                         } else {
-                            builder.method(rel, methodAdapter.getValue().readMethod(context, mapValue));
+                            builder.method(rel, methodAdapter.getValue().mapMethod(context, mapValue));
                         }
 
                     } else {
@@ -125,7 +128,7 @@ public final class DidDocumentAdapter {
                         if (service instanceof Map mapValue) {
 
                             var serviceType = mapValue.get(DidVocab.KEY_TYPE);
-
+                            
                             if (serviceType == null) {
                                 throw new IllegalArgumentException();
                             }
@@ -139,6 +142,10 @@ public final class DidDocumentAdapter {
                             var serviceAdapter = serviceAdapters.get(serviceType);
 
                             if (serviceAdapter == null) {
+                                serviceAdapter = serviceAdapters.get(ANY_SERVICE_TYPE);
+                            }
+                            
+                            if (serviceAdapter == null) {
                                 throw new IllegalArgumentException(
                                         "No adapter is configured for service type '" + serviceType + "'.");
                             }
@@ -147,7 +154,7 @@ public final class DidDocumentAdapter {
                                 throw new IllegalArgumentException();
                             }
 
-                            serviceContainer.add(serviceAdapter.getValue().readService(context, mapValue));
+                            serviceContainer.add(serviceAdapter.getValue().mapService(context, mapValue));
 
                         } else {
                             throw new IllegalArgumentException();
@@ -231,6 +238,12 @@ public final class DidDocumentAdapter {
             return this;
         }
 
+        public Builder genericServiceAdapter() {
+            return service(ANY_SERVICE_TYPE,
+                    _ -> true, // any context is accepted to get generic service
+                    new GenericServiceAdapter());
+        }
+
         public DidDocumentAdapter build() {
 
             if (methodAdapters.isEmpty() && serviceAdapters.isEmpty()) {
@@ -239,6 +252,5 @@ public final class DidDocumentAdapter {
 
             return new DidDocumentAdapter(isAccepted, Map.copyOf(methodAdapters), Map.copyOf(serviceAdapters));
         }
-
     }
 }

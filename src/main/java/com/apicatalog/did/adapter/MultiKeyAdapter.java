@@ -43,7 +43,7 @@ public class MultiKeyAdapter implements DidDocumentAdapter.MethodAdapter {
      * @throws IllegalArgumentException if the input contains invalid or unsupported
      *                                  properties
      */
-    public MultiKey readMethod(Collection<String> context, Map<String, Object> compacted) {
+    public MultiKey mapMethod(Collection<String> context, Map<String, Object> compacted) {
 
         DidUrl id = null;
         Did controller = null;
