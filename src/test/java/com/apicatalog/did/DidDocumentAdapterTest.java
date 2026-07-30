@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.apicatalog.did.adapter.DidDocumentAdapter;
-import com.apicatalog.did.adapter.GenericServiceAdapter;
 import com.apicatalog.did.adapter.JsonWebKeyAdapter;
 import com.apicatalog.did.adapter.MultiKeyAdapter;
 import com.apicatalog.did.method.JsonWebKey;
